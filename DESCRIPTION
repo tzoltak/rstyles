@@ -8,11 +8,12 @@ Authors@R: c(person("Tomasz", "\u017b\u00F3\u0142tak",
                     comment = c(ORCID = "0000-0003-1354-4472")),
              person("Artur", "Pokropek",
                     email = "artur.pokropek@gmail.com",
-                    role = c("aut")),
+                    role = c("aut"),
                     comment = c(ORCID = "0000-0002-5899-2917")),
              person("Marek", "Muszy\u0143ski",
                     email = "marek.a.muszynski@gmail.com",
-                    role = c("aut")))
+                    role = c("aut"),
+                    comment= c(ORCID = "0000-0002-9306-1237")))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: MIT + file LICENSE
