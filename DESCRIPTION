@@ -1,10 +1,10 @@
-Package: rstyle
+Package: rstyles
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Generating simulated data mimicking response styles to survey questions
 Version: 0.1.0
 Authors@R: c(person("Tomasz", "\u017b\u00F3\u0142tak",
                     email = "tomek@zozlak.org",
-                    role = c("aut", "cre", "mnt"),
+                    role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-1354-4472")),
              person("Artur", "Pokropek",
                     email = "artur.pokropek@gmail.com",
@@ -14,11 +14,18 @@ Authors@R: c(person("Tomasz", "\u017b\u00F3\u0142tak",
                     email = "marek.a.muszynski@gmail.com",
                     role = c("aut"),
                     comment= c(ORCID = "0000-0002-9306-1237")))
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: "omasz \u017b\u00F3\u0142tak <tomek@zozlak.org>
+Description: Package allows to generate simulated datasests using algorithms
+    that mimick different response styles to survey questions using: 1) IRTree
+    approach, 2) (G)PCM (and rating scale version of a partial credit model)
+    approach, 3) user provided function that (with some probability) chooses
+    response using information about prevoius responses. This allows to cover
+    wide range of potential response styles like: extreme and middle (ERS, MRS),
+    acquiesce (ARS) and also careless/inattentive responding (CR, IR).
 License: MIT + file LICENSE
 Depends: R (>= 4.0.0)
 Imports:
+    mvtnorm
 Suggests:
     testthat,
     covr,
@@ -27,3 +34,5 @@ Suggests:
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.1
+Config/testthat/edition: 3
