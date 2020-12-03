@@ -2,3 +2,7 @@
 
 export(generate_test_responses)
 export(make_item)
+export(make_scoring_matrix_aem)
+export(score_on_last_answer_next)
+export(score_on_last_answer_previous)
+export(score_on_last_answer_straight)

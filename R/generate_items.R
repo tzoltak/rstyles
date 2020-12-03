@@ -1,3 +1,14 @@
+# generate_test <- function(nItems, a, d, b = NULL) {
+#   stopifnot(is.numeric(nItems),
+#             length(nItem) == 1,
+#             !is.na(nItems),
+#             is.list(a),
+#             is.list(d))
+#   if (!is.null(b)) {
+#     stopifnot(is.numeric(b),
+#               length(b) == nItems)
+#   }
+# }
 #' @title Internals: making object representing an item
 #' @param scoringMatrix matrix describing how responses (described in rownames
 #' of the matrix) map on \emph{scores} of latent traits (described in columns of
@@ -29,31 +40,62 @@
 make_item <- function(scoringMatrix, slopes, intercepts,
                       mode = c('sequential', 'simultaneous'),
                       scoringOnPreviousResponses = NULL, editResponse = NULL) {
-  stopifnot(is.matrix(scoringMatrix),
-            ncol(scoringMatrix) > 0,
-            nrow(scoringMatrix) > 1,
-            length(unique(rownames(scoringMatrix))) == nrow(scoringMatrix),
-            !anyNA(scoringMatrix[, 1]),
-            all(!duplicated(scoringMatrix)),
-            all(apply(scoringMatrix, 1, function(x) {
-              return(max(which(!is.na(x))) < min(which(is.na(x))))})),
-            is.numeric(slopes),
-            !anyNA(slopes),
-            all(colnames(scoringMatrix) %in% names(slopes)),
-            !is.null(scoringOnPreviousResponses) | !is.null(editResponse) |
+  stopifnot("Parameter `scoringMatrix` must be a numeric matrix." =
+              is.matrix(scoringMatrix),
+            "Parameter `scoringMatrix` must be a numeric matrix." =
+              is.numeric(scoringMatrix),
+            "Parameter `scoringMatrix` must have at least one column." =
+              ncol(scoringMatrix) > 0,
+            "Parameter `scoringMatrix` must have at least two rows." =
+              nrow(scoringMatrix) > 1,
+            "Parameter `scoringMatrix` must have unique rownames." =
+              length(unique(rownames(scoringMatrix))) == nrow(scoringMatrix),
+            "With parameter `mode` set to 'sequential` parameter `scoringMatrix` can't contain NAs." =
+              mode == 'sequential' | !anyNA(scoringMatrix),
+            "Parameter `scoringMatrix` can't contain NAs in the first column." =
+              !anyNA(scoringMatrix[, 1]),
+            "In each row of `scoringMatrix` NA element can't be followed by a non-NA element." =
+              all(apply(scoringMatrix, 1, function(x) {
+                return(max(which(!is.na(x))) < ifelse(anyNA(x),
+                                                      min(which(is.na(x))),
+                                                      length(x) + 1))})),
+            "Parameter 'scoringMatrix` can't contain duplicated rows." =
+              all(!duplicated(scoringMatrix)),
+            "Parameter `slopes` must be a numeric vector." =
+              is.vector(slopes),
+            "Parameter `slopes` must be a numeric vector." =
+              is.numeric(slopes),
+            "Parameter `slopes` can't contain NAs." =
+              !anyNA(slopes),
+            "Elements of parameter `slopes` must have unique names." =
+              all(!duplicated(names(slopes))),
+            "All the colnames of `scoringMatrix` must appear in names of `slopes`." =
+              all(colnames(scoringMatrix) %in% names(slopes)),
+            "With no parameters `scoringOnPreviousResponses` or `editResponse` being provided, all the names of `slopes` must appear in names of `scoringMatrix`." =
+              !is.null(scoringOnPreviousResponses) | !is.null(editResponse) |
               all(names(slopes) %in% colnames(scoringMatrix)),
-            is.numeric(intercepts),
-            length(intercepts) %in% nrow(scoringMatrix) + c(0, 1),
-            !anyNA(intercepts),
-            length(intercepts) == (nrow(scoringMatrix) - 1) | intercepts[1] == 0)
+            "Parameter `intercepts` must be a numeric vector." =
+              is.numeric(intercepts),
+            "Parameter `intercepts` must be a numeric vector." =
+              is.vector(intercepts),
+            "Parameter `intercepts` must have the same length or be shorter by one than a number of rows of `scoringMatrix`." =
+              length(intercepts) %in% (nrow(scoringMatrix) - c(0, 1)),
+            "If length of `intercepts` is the same as number of rows of `scoringMatrix`, the first element of `intercepts` must be 0." =
+              length(intercepts) == (nrow(scoringMatrix) - 1) | intercepts[1] == 0,
+            "Parameter `intercepts` can't contain NAs." =
+              !anyNA(intercepts))
   if (!is.null(scoringOnPreviousResponses)) {
-    stopifnot(is.function(scoringOnPreviousResponses),
-              all(c("previousResponses", "scoringMatrix") %in%
-                    names(formals(editResponse))))
+    stopifnot("Parameter `scoringOnPreviousResponses` must be a function." =
+                is.function(scoringOnPreviousResponses),
+              "Function provided by parameter `scoringOnPreviousResponses` must accept parameters `previousResponses` and `scoringMatrix`." =
+                all(c("previousResponses", "scoringMatrix") %in%
+                      names(formals(scoringOnPreviousResponses))))
   }
   if (!is.null(editResponse)) {
-    stopifnot(is.function(editResponse),
-              all(c("response", "scoringMatrix") %in%
+    stopifnot("Parameter `editResponse` must be a function." =
+                is.function(editResponse),
+              "Function provided by parameter `editResponse` must accept parameters `response` and `scoringMatrix`." =
+                all(c("response", "scoringMatrix") %in%
                     names(formals(editResponse))))
   }
   if (length(intercepts) < nrow(scoringMatrix)) {

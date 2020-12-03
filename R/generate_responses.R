@@ -23,8 +23,8 @@ generate_test_responses <- function(traitCov, items, n,
               "Parameter `traitCov` can't contain NAs." = all(!is.na(traitCov)),
               "Parameter `items` must be a list of class 'itemList'" =
                 is.list(items),
-              "Parameter `items` must be a list of class 'itemList'" =
-                inherits(items, "itemList"),
+              "Each element of `items` must be of class 'rstylesItem'" =
+                all(sapply(items, inherits, what = "rstylesItem")),
               "Parameter `n` must be a numeric vector." = is.numeric(n),
               "Parameter `n` must be of length one." = length(n) == 1,
               "Parameter `n` must be an integer." = as.integer(n) == n,
@@ -40,13 +40,14 @@ generate_test_responses <- function(traitCov, items, n,
     traitMeans <- rep(traitMeans, ncol(traitCov))
   }
   theta = mvtnorm::rmvnorm(n, traitMeans, traitCov)
+  colnames(theta) <- colnames(traitCov)
 
   responses = matrix(NA_integer_, nrow = n, ncol = length(items))
   for (i in 1:ncol(responses)) {
     scoringMatrix <- items[[i]]$scoringMatrix
     if (!is.null(items[[i]]$scoringOnPreviousResponses) && i > 1) {
-      for (j in which(responses[!duplicated(responses[, 1:i]), drop = FALSE])) {
-        scoringMatrix <-
+      for (j in which(!duplicated(responses[, 1:(i - 1), drop = FALSE]))) {
+        scoringMatrixTemp <-
           cbind(do.call(items[[i]]$scoringOnPreviousResponses,
                         list(previousResponses = responses[j, 1:(i - 1)],
                              scoringMatrix = scoringMatrix)),
@@ -55,14 +56,14 @@ generate_test_responses <- function(traitCov, items, n,
         if (items[[i]]$mode == 'sequential') {
           responses[whichRows, i] <-
             generate_item_responses_sqn(theta[whichRows, , drop = FALSE],
-                                        scoringMatrix,
+                                        scoringMatrixTemp,
                                         items[[i]]$slopes,
                                         items[[i]]$intercepts,
                                         items[[i]]$editResponse)
         } else {#simultaneous
           responses[whichRows, i] <-
             generate_item_responses_sml(theta[whichRows, , drop = FALSE],
-                                        scoringMatrix,
+                                        scoringMatrixTemp,
                                         items[[i]]$slopes,
                                         items[[i]]$intercepts)
         }
@@ -198,14 +199,24 @@ generate_item_responeses_gpcm <- function(theta, weightsMatrix, intercepts) {
 
   for (i in 1:nrow(weightsMatrix)) {
     probs[, i] <-
-      exp(intercepts[i] + theta %*% weightsMatrix[i, , drop = FALSE])
+      exp(intercepts[i] + theta %*% t(weightsMatrix[i, , drop = FALSE]))
   }
   probs <- probs / rowSums(probs)
-  probs <- t(apply(probs, 1, cumsum))
+  for (i in 1:nrow(probs)) {
+    probs[i, ] <- cumsum(probs[i, ])
+  }
+  # contrary to common opinion loop (above) can be faster (than commented code below)
+  # probs <- t(apply(probs, 1, cumsum))
   probs[, ncol(probs)] = stats::runif(nrow(probs), 0, 1)
-  responses <- apply(probs, 1,
-                     function(x) {return(
-                       names(x)[which(x >= x[length(x)])[1]]
-                     )})
+
+  responses <- vector(mode = "character", length = nrow(probs))
+  for (i in 1:nrow(probs)) {
+    responses[i] <- colnames(probs)[probs[i, ] >= probs[i, ncol(probs)]][1]
+  }
+  # contrary to common opinion loop (above) can be faster (than commented code below)
+  # responses <- apply(probs, 1,
+  #                    function(x) {return(
+  #                      names(x)[x >= x[length(x)]][1]
+  #                    )})
   return(responses)
 }
