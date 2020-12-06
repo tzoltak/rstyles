@@ -9,7 +9,8 @@ generate_item_responses_sqn(
   scoringMatrix,
   slopes,
   intercepts,
-  editResponse = NULL
+  editResponse = NULL,
+  decidingOnPreviousResponse = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,12 @@ accepting two parameters: \code{response} - generated response (by the model
 described with the first column of the \code{scoringMatrix}) that is supposed
 to be \emph{edited} and \code{scoringMatrix} - current scoring matrix (to be
 replaced)}
+
+\item{decidingOnPreviousResponse}{logical value indicating whether first
+column of provided scoring matrix describes making decision whether to
+respond on the basis of responses to previous items or not (in this first
+case \emph{negative} choice shouldn't reduce number of rows in a response
+matrix)}
 }
 \value{
 vector of responses on item
@@ -37,11 +44,14 @@ approach. It goes through consecutive columns of a scoring matrix,
 calling \code{\link{generate_item_responeses_gpcm}} to get responses at
 a given node of a tree and the recursively calls itself on subsets of
 observations with a given response with reduced scoring matrix.
+}
+\section{Limitations}{
 
-\strong{Limitations:} Because function internally relies on calling
+Because function internally relies on calling
 \code{\link{generate_item_responeses_gpcm}}, no normal ogive models can be
 used (this may be changed in the future versions).
 }
+
 \seealso{
 \code{link{generate_test_responses}},
 \code{\link{generate_item_responses_sml}},

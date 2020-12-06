@@ -31,5 +31,7 @@ matrix with responses on items
 \code{\link{generate_item_responses_sml}}
 }
 \description{
-Generate simulated data
+Generates simulated responses to a test given inforamations
+about items and parameters of joint multivariate normal distribution of
+latent traits.
 }

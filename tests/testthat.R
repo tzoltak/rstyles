@@ -1,4 +1,5 @@
 library(testthat)
 library(rstyles)
+library(mirt)
 
-#test_check("rstyles")
+test_check("rstyles")

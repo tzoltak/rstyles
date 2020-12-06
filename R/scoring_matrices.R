@@ -1,4 +1,7 @@
 #' @title Make scoring matrix
+#' @description Makes response matrix, i.e. matrix describing how each latent
+#' trait (represented in columns) affects (or not) chances to answer each
+#' response (represented in rows).
 #' @param responses vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
 #' @param sequence sequence of decisions made by a \emph{respondent}, determined
@@ -18,7 +21,7 @@
 #' @param reversed logical value - is item a reversed one? (see details)
 #' @param iType determines a way in which scoring pattern for additional
 #' \emph{intensity} trait will be generated (see details)
-#' @details \strong{\code{sequence} other than "simultaneous"}
+#' @details \strong{\code{sequence} other than "simultaneous":}
 #'
 #' For number of responses between 5 and 6 function generates scoring
 #' matrix in a way mimicking Böckenholt's approach (2017) to describe
@@ -41,7 +44,7 @@
 #' (\code{iType="between"}) or as independent sequences for each unique
 #' combination of values in the precious columns (\code{iType="within"}).)
 #'
-#' \strong{\code{sequence} is "simultaneous"}
+#' \strong{\code{sequence} is "simultaneous":}
 #'
 #' In this case a GPCM scoring matrix is generated mimicking approach of
 #' Plieninger (2016), i.e. assuming that response process is
@@ -66,65 +69,65 @@ make_scoring_matrix_aem <- function(
             "Paramater `responses` can't contain duplicated values." =
               all(!duplicated(responses)),
             "Paramater `responses` must have at least two values or be a positive integer." =
-              length(responses) > 1 | is.numeric(responses),
+              length(responses) > 1L | is.numeric(responses),
             "Paramater `responses` can't contain NAs." = !anyNA(responses))
-  if (length(responses) <= 1) {
+  if (length(responses) <= 1L) {
     stopifnot("Paramater `responses` must have at least two values or be a positive integer." =
-                length(responses) == 1,
+                length(responses) == 1L,
               "Paramater `responses` must have at least two values or be a positive integer." =
                 as.integer(responses) == responses,
               "Paramater `responses` must have at least two values or be a positive integer larger than 1." =
-                responses > 1)
-    responses = 1:responses
+                responses > 1L)
+    responses = 1L:responses
   }
   stopifnot("Paramater `nMiddle` must be a non-negative integer." =
               is.numeric(nMiddle),
             "Paramater `nMiddle` must be a non-negative integer." =
-              length(nMiddle) == 1,
+              length(nMiddle) == 1L,
             "Paramater `nMiddle` can't contain NAs." =
               !is.na(nMiddle),
             "Paramater `nMiddle` must be a non-negative integer." =
               as.integer(nMiddle) == nMiddle,
             "Paramater `nMiddle` must be a non-negative integer." =
-              nMiddle >= 0,
+              nMiddle >= 0L,
             "Paramater `nExtreme` must be a non-negative integer." =
               is.numeric(nExtreme),
             "Paramater `nExtreme` must be a non-negative integer." =
-              length(nExtreme) == 1,
+              length(nExtreme) == 1L,
             "Paramater `nExtreme` can't contain NAs." =
               !is.na(nExtreme),
             "Paramater `nExtreme` must be a non-negative integer." =
               as.integer(nExtreme) == nExtreme,
             "Paramater `nExtreme` must be a non-negative integer." =
-              nExtreme >= 0)
-  if (length(responses) %% 2 != nMiddle %% 2) {
-    nMiddle <- nMiddle - 1
+              nExtreme >= 0L)
+  if (length(responses) %% 2L != nMiddle %% 2L) {
+    nMiddle <- nMiddle - 1L
   }
   stopifnot("Paramater `nAcquiescence` must be a non-negative integer." =
               is.numeric(nAcquiescence),
             "Paramater `nAcquiescence` must be a non-negative integer." =
-              length(nAcquiescence) == 1,
+              length(nAcquiescence) == 1L,
             "Paramater `nAcquiescence` can't contain NAs." =
               !is.na(nAcquiescence),
             "Paramater `nAcquiescence` must be a non-negative integer." =
               as.integer(nAcquiescence) == nAcquiescence,
             "Paramater `nAcquiescence` must be a non-negative integer." =
-              nAcquiescence >= 0,
+              nAcquiescence >= 0L,
             "Parameter `reversed` must be TRUE or FALSE." =
               is.logical(reversed),
             "Parameter `reversed` must be TRUE or FALSE." =
-              length(reversed) == 1,
+              length(reversed) == 1L,
             "Parameter `reversed` must be TRUE or FALSE." =
               reversed %in% c(FALSE, TRUE))
   stopifnot("There are fewer responses than the number of responses that is supposed to be either middle (`nMiddle`) or extreme (`2*nExtreme`)." =
-              nMiddle + 2*nExtreme <= length(responses),
+              nMiddle + 2L*nExtreme <= length(responses),
             "Number of responses that is supposed to be acquiescence (`nAcquiescence`) must be no more than a half of number of available responses." =
               nAcquiescence <= floor(length(responses) / 2))
 
   if (sequence == "simultaneous") {
     colNames <- c("i", "m", "e", "a")
   } else {
-    colNames <- c(strsplit(sequence, "")[[1]], "i")
+    colNames <- c(strsplit(sequence, "")[[1L]], "i")
   }
   scoringMatrix <- matrix(NA_integer_, nrow = length(responses), ncol = 4,
                           dimnames = list(responses, colNames))
@@ -147,7 +150,7 @@ make_scoring_matrix_aem <- function(
   }
   if (sequence != "simultaneous") {
     # inserting NAs in rows that describe paths that ends up earlier
-    for (i in 1L:(ncol(scoringMatrix) - 1)) {
+    for (i in 1L:(ncol(scoringMatrix) - 1L)) {
       patterns <- scoringMatrix[!duplicated(scoringMatrix[, 1L:i]), 1L:i,
                                 drop = FALSE]
       for (j in 1L:nrow(patterns)) {
@@ -183,8 +186,8 @@ make_scoring_matrix_aem <- function(
     }
   }
 
-  columnsToRemove <- apply(scoringMatrix, 2, function(x) {
-    return(length(setdiff(unique(x), NA)) < 2)
+  columnsToRemove <- apply(scoringMatrix, 2L, function(x) {
+    return(length(setdiff(unique(x), NA)) < 2L)
   })
   scoringMatrix <- scoringMatrix[, !columnsToRemove, drop = FALSE]
 

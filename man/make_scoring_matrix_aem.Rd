@@ -45,10 +45,12 @@ by order of codes in a string:
 matrix of integers
 }
 \description{
-Make scoring matrix
+Makes response matrix, i.e. matrix describing how each latent
+trait (represented in columns) affects (or not) chances to answer each
+response (represented in rows).
 }
 \details{
-\strong{\code{sequence} other than "simultaneous"}
+\strong{\code{sequence} other than "simultaneous":}
 
 For number of responses between 5 and 6 function generates scoring
 matrix in a way mimicking Böckenholt's approach (2017) to describe
@@ -71,7 +73,7 @@ generted either as a one sequence for all the rows to be filled up
 (\code{iType="between"}) or as independent sequences for each unique
 combination of values in the precious columns (\code{iType="within"}).)
 
-\strong{\code{sequence} is "simultaneous"}
+\strong{\code{sequence} is "simultaneous":}
 
 In this case a GPCM scoring matrix is generated mimicking approach of
 Plieninger (2016), i.e. assuming that response process is

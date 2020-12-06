@@ -6,16 +6,13 @@
 
 # To do
 
--   test!
-
--   function to be provided as a `scoringOnPreviousResponses` parameter to `make_item()`;
-
-    -   this will allow to model careless/inattentive response style;
-    -   must check how burdensome is dealing with patterns of all the prevoius responses - it is possible that for efficiency reasons we should restrict the length of trace that is used;
+-   tests!
 
 -   function(s) that will automate creating sets of items (i.e. *tests*) providing user a control of the distribution of values of its parameters;
 
--   function(s) to compute non-GPCM (2PLM) models at nodes of *sequentiialy* responsed items;
+-   functions to compute non-GPCM (2PLM) models at nodes of *sequentiialy* responsed items;
+
+-   functions to use as `editResponse` argument to `make_item()`;
 
 # Other useful packages and repositories]
 
