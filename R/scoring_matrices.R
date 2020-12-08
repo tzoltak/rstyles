@@ -19,6 +19,8 @@
 #' @param nExtreme (half of the) number of \emph{extreme} \emph{categories}
 #' @param nAcquiescence number of \emph{acquiescence} \emph{categories}
 #' @param reversed logical value - is item a reversed one? (see details)
+#' @param aType determines a way in which scoring pattern for acquiescence is
+#' generated when it appears in different branches of an IRTree
 #' @param iType determines a way in which scoring pattern for additional
 #' \emph{intensity} trait will be generated (see details)
 #' @details \strong{\code{sequence} other than "simultaneous":}
@@ -29,20 +31,34 @@
 #' of the middle, extreme and acquiescence categories - this decisions may be
 #' made in diferent order, what is controlled by parameter \code{sequence}.
 #'
+#' Please note that following Böckenholt \emph{acquiescence} trait is managed in
+#' a little different way that the other two. If choice involving
+#' \emph{acquiescence} may be made in different nodes of IRTree (i.e. for
+#' different combinations of values in previous columns of the scoring matrix),
+#' separate column describing decision in each node (for each combination) is
+#' created by default (and names of these columns are \emph{a} followed by
+#' integer index). That allows for specyfing different IRT parameters for each
+#' node. Setting parameter \code{aType = "common"} allows to collapse these
+#' column into one if you want to constrain model parameters between nodes in
+#' a convienient way.
+#'
 #' With less than 5 possible responses functions apply the same logic, but not
 #' all of the three aformentioned styles can be invloved because lack of
 #' variablity in possible responses.
 #'
 #' With more than 6 possible responses there must be odditional trait added to
 #' scoringMatrix to describe process of choice between all the possible
-#' responses. In such a case function adds 4th column to a scoring matrix that
-#' is named \emph{i} (standing for intensity) and is filled up with scores for
-#' such rows of a scoring matrix that occurs more than once. Scores in this
-#' column are sequences of positive integers either increasing
+#' responses. In such a case function adds additional columns to a scoring
+#' matrix that names are \emph{i} (standing for intensity) folowed by an index
+#' and are filled up with scores for such combinations of values in previous
+#' columns of the scoring matrix that occur more than once. Scores in these
+#' columns are sequences of non-negative integers either increasing
 #' (\code{reversed=FALSE}) or decreasing (\code{reversed=TRUE}) that are
-#' generted either as a one sequence for all the rows to be filled up
-#' (\code{iType="between"}) or as independent sequences for each unique
-#' combination of values in the precious columns (\code{iType="within"}).)
+#' generted independent for each unique combination of values in the previous
+#' columns and by deafult each of such combinations is described by a separate
+#' column (allowing for specification of different model parameters).
+#' Analogously to \emph{acquiescence} trait these colmns can be collapsed into
+#' one by setting \code{iType = "common"}.
 #'
 #' \strong{\code{sequence} is "simultaneous":}
 #'
@@ -55,15 +71,32 @@
 #' \emph{categories} (column \emph{a}) contribute alltogether to propensity
 #' of choosing each response.
 #' @return matrix of integers
+#' @examples
+#' # Bockenholt 2017: 73
+#' (bockenholtMAE5 <- make_scoring_matrix_aem(5, "mae"))
+#' # Bockenholt 2017: 76
+#' (bockenholtMAE6 <- make_scoring_matrix_aem(6, "mae"))
+#' # Bockenholt 2017: 77
+#' (bockenholtAEM6 <- make_scoring_matrix_aem(6, "aem"))
+#' # Plieninger 2016: 39
+#' (plieninger5 <- make_scoring_matrix_aem(5, "simultaneous"))
+#' (plieninger5r <- make_scoring_matrix_aem(5, "simultaneous", reversed = TRUE))
+#'
+#' # some more complicated cases:
+#' make_scoring_matrix_aem(10, "ema", nMiddle = 3, nExtreme = 2)
+#' make_scoring_matrix_aem(10, "ema", nMiddle = 3, nExtreme = 2,
+#'                         aType = "common", iType = "common")
+#' make_scoring_matrix_aem(9, "mae", nMiddle = 3, nExtreme = 2, reversed = TRUE)
 #' @export
 make_scoring_matrix_aem <- function(
   responses, sequence = c("mae", "mea", "aem", "ame", "ema", "eam",
                           "simultaneous"),
-  nMiddle = 2L, nExtreme = 1L,
-  nAcquiescence = floor(length(responses) / 2),
-  reversed = FALSE, iType = c("within", "between"))
+  nMiddle = 2L, nExtreme = 1L, nAcquiescence = floor(length(responses) / 2),
+  reversed = FALSE,
+  aType = c("separate", "common"), iType = c("separate", "common"))
 {
   sequence = match.arg(sequence)
+  aType = match.arg(aType)
   iType = match.arg(iType)
   stopifnot("Paramater `responses` must be a vector." = is.vector(responses),
             "Paramater `responses` can't contain duplicated values." =
@@ -129,25 +162,92 @@ make_scoring_matrix_aem <- function(
   } else {
     colNames <- c(strsplit(sequence, "")[[1L]], "i")
   }
-  scoringMatrix <- matrix(NA_integer_, nrow = length(responses), ncol = 4,
-                          dimnames = list(responses, colNames))
+  scoringSubMatrices <- vector(mode = "list", length = 4)
+  names(scoringSubMatrices) <- colNames
   # initial fill-in
-  for (i in 1L:ncol(scoringMatrix)) {
-    if (colnames(scoringMatrix)[i] == "m") {
-      scoringMatrix[, i] <- c(rep(0L, (nrow(scoringMatrix) - nMiddle) / 2),
-                              rep(1L, nMiddle),
-                              rep(0L, (nrow(scoringMatrix) - nMiddle) / 2))
-    } else if (colnames(scoringMatrix)[i] == "e") {
-      scoringMatrix[, i] <- c(rep(1L, nExtreme),
-                              rep(0L, nrow(scoringMatrix) - 2*nExtreme),
-                              rep(1L, nExtreme))
-    } else if (colnames(scoringMatrix)[i] == "a") {
-      scoringMatrix[, i] <- c(rep(0L, nrow(scoringMatrix) - nAcquiescence),
-                              rep(1L, nAcquiescence))
+  for (i in 1L:length(scoringSubMatrices)) {
+    if (names(scoringSubMatrices)[i] == "m") {
+      scoringSubMatrices[[i]] <-
+        matrix(c(rep(0L, (length(responses) - nMiddle) / 2),
+                 rep(1L, nMiddle),
+                 rep(0L, (length(responses) - nMiddle) / 2)),
+               ncol = 1, dimnames = list(responses, "m"))
+    } else if (names(scoringSubMatrices)[i] == "e") {
+      scoringSubMatrices[[i]] <-
+        matrix(c(rep(1L, nExtreme),
+                 rep(0L, length(responses) - 2*nExtreme),
+                 rep(1L, nExtreme)),
+               ncol = 1, dimnames = list(responses, "e"))
+    } else if (names(scoringSubMatrices)[i] == "a") {
+      if (sequence != "simultaneous" && aType == "separate" && i > 1L) {
+        scoringMatrix <- cbind(scoringSubMatrices[[1]],
+                               scoringSubMatrices[[2]],
+                               scoringSubMatrices[[3]],
+                               scoringSubMatrices[[4]])
+        patterns <- apply(scoringMatrix, 1L, paste, collapse = "")
+        uniquePatterns <- table(patterns)
+        uniquePatterns <- names(uniquePatterns)[uniquePatterns > 1L]
+        nColAcquiescence <- length(uniquePatterns)
+        if (nColAcquiescence > 1L) {
+          scoringSubMatrices[[i]] <-
+            matrix(rep(c(rep(0L, length(responses) - nAcquiescence),
+                         rep(1L, nAcquiescence)),
+                       nColAcquiescence),
+                   ncol = nColAcquiescence,
+                   dimnames = list(responses, paste0("a", 1L:nColAcquiescence)))
+          for (p in 1L:length(uniquePatterns)) {
+            scoringSubMatrices[[i]][patterns != uniquePatterns[p], p] <-
+              NA_integer_
+          }
+        } else if (nColAcquiescence > 0L) {
+          scoringSubMatrices[[i]] <-
+            matrix(c(rep(0L, length(responses) - nAcquiescence),
+                     rep(1L, nAcquiescence)),
+                   ncol = 1, dimnames = list(responses, "a"))
+        }
+      } else {
+        scoringSubMatrices[[i]] <-
+          matrix(c(rep(0L, length(responses) - nAcquiescence),
+                   rep(1L, nAcquiescence)),
+                 ncol = 1, dimnames = list(responses, "a"))
+      }
     } else if (sequence == "simultaneous") {
-      scoringMatrix[, i] <- sort(1L:nrow(scoringMatrix), decreasing = reversed)
+      scoringSubMatrices[[i]] <-
+        matrix(sort(0L:(length(responses) - 1), decreasing = reversed),
+               ncol = 1, dimnames = list(responses, "i"))
+    } else {
+      scoringMatrix <- cbind(scoringSubMatrices[[1]],
+                             scoringSubMatrices[[2]],
+                             scoringSubMatrices[[3]],
+                             scoringSubMatrices[[4]])
+      patterns <- apply(scoringMatrix, 1L, paste, collapse = "")
+      uniquePatterns <- table(patterns)
+      uniquePatterns <- names(uniquePatterns)[uniquePatterns > 1L]
+      nColIntensity <- length(uniquePatterns)
+      if (nColIntensity > 0L) {
+        if (nColIntensity > 1L && iType == "separate") {
+          scoringSubMatrices[[i]] <-
+            matrix(rep(NA_integer_, length(responses)*nColIntensity),
+                   ncol = nColIntensity,
+                   dimnames = list(responses, paste0("i", 1L:nColIntensity)))
+        } else {
+          scoringSubMatrices[[i]] <-
+            matrix(rep(NA_integer_, length(responses)), ncol = 1,
+                   dimnames = list(responses, "i"))
+        }
+        for (p in 1L:length(uniquePatterns)) {
+          scoringSubMatrices[[i]][patterns == uniquePatterns[p],
+                                  ifelse(iType == "separate", p, 1L)] <-
+            sort(0L:(sum(patterns == uniquePatterns[p]) - 1L),
+                 decreasing = reversed)
+        }
+      }
     }
   }
+  scoringMatrix <- cbind(scoringSubMatrices[[1]],
+                         scoringSubMatrices[[2]],
+                         scoringSubMatrices[[3]],
+                         scoringSubMatrices[[4]])
   if (sequence != "simultaneous") {
     # inserting NAs in rows that describe paths that ends up earlier
     for (i in 1L:(ncol(scoringMatrix) - 1L)) {
@@ -157,32 +257,12 @@ make_scoring_matrix_aem <- function(
         whichRows <- apply(unname(scoringMatrix[, 1L:i, drop = FALSE]),
                            1L, identical, y = unname(patterns[j, ]))
         if (sum(whichRows) == 1L) {
-          scoringMatrix[whichRows, (i + 1L):ncol(scoringMatrix)] <- NA
+          scoringMatrix[whichRows, (i + 1L):ncol(scoringMatrix)] <- NA_integer_
+        }
+        if (length(unique(scoringMatrix[whichRows, (i + 1L)])) == 1L) {
+          scoringMatrix[whichRows, (i + 1L)] <- NA_integer_
         }
       }
-    }
-    # generating scores on 'intensity' trait, if needed
-    patterns <-
-      scoringMatrix[!duplicated(scoringMatrix[, 1L:(ncol(scoringMatrix) - 1L)]),
-                    1L:(ncol(scoringMatrix) - 1L), drop = FALSE]
-    for (j in 1L:nrow(patterns)) {
-      whichRows <- apply(unname(scoringMatrix[, 1L:(ncol(scoringMatrix) - 1L),
-                                              drop = FALSE]),
-                         1L, identical, y = unname(patterns[j, ]))
-      if (sum(whichRows) > 1L) {
-        if (iType == "between") {
-          scoringMatrix[whichRows, ncol(scoringMatrix)] <- 1L
-        } else {
-          scoringMatrix[whichRows, ncol(scoringMatrix)] <-
-            sort(1L:sum(whichRows), decreasing = reversed)
-        }
-      }
-    }
-    if (iType == "between") {
-      scoringMatrix[!is.na(scoringMatrix[, ncol(scoringMatrix)]),
-                    ncol(scoringMatrix)] <-
-        sort(1L:sum(!is.na(scoringMatrix[, ncol(scoringMatrix)])),
-             decreasing = reversed)
     }
   }
 

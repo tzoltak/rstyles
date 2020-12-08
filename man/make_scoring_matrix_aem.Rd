@@ -11,7 +11,8 @@ make_scoring_matrix_aem(
   nExtreme = 1L,
   nAcquiescence = floor(length(responses)/2),
   reversed = FALSE,
-  iType = c("within", "between")
+  aType = c("separate", "common"),
+  iType = c("separate", "common")
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ by order of codes in a string:
 
 \item{reversed}{logical value - is item a reversed one? (see details)}
 
+\item{aType}{determines a way in which scoring pattern for acquiescence is
+generated when it appears in different branches of an IRTree}
+
 \item{iType}{determines a way in which scoring pattern for additional
 \emph{intensity} trait will be generated (see details)}
 }
@@ -58,20 +62,34 @@ response to the item as a sequence of binary decissions involving choosing
 of the middle, extreme and acquiescence categories - this decisions may be
 made in diferent order, what is controlled by parameter \code{sequence}.
 
+Please note that following Böckenholt \emph{acquiescence} trait is managed in
+a little different way that the other two. If choice involving
+\emph{acquiescence} may be made in different nodes of IRTree (i.e. for
+different combinations of values in previous columns of the scoring matrix),
+separate column describing decision in each node (for each combination) is
+created by default (and names of these columns are \emph{a} followed by
+integer index). That allows for specyfing different IRT parameters for each
+node. Setting parameter \code{aType = "common"} allows to collapse these
+column into one if you want to constrain model parameters between nodes in
+a convienient way.
+
 With less than 5 possible responses functions apply the same logic, but not
 all of the three aformentioned styles can be invloved because lack of
 variablity in possible responses.
 
 With more than 6 possible responses there must be odditional trait added to
 scoringMatrix to describe process of choice between all the possible
-responses. In such a case function adds 4th column to a scoring matrix that
-is named \emph{i} (standing for intensity) and is filled up with scores for
-such rows of a scoring matrix that occurs more than once. Scores in this
-column are sequences of positive integers either increasing
+responses. In such a case function adds additional columns to a scoring
+matrix that names are \emph{i} (standing for intensity) folowed by an index
+and are filled up with scores for such combinations of values in previous
+columns of the scoring matrix that occur more than once. Scores in these
+columns are sequences of non-negative integers either increasing
 (\code{reversed=FALSE}) or decreasing (\code{reversed=TRUE}) that are
-generted either as a one sequence for all the rows to be filled up
-(\code{iType="between"}) or as independent sequences for each unique
-combination of values in the precious columns (\code{iType="within"}).)
+generted independent for each unique combination of values in the previous
+columns and by deafult each of such combinations is described by a separate
+column (allowing for specification of different model parameters).
+Analogously to \emph{acquiescence} trait these colmns can be collapsed into
+one by setting \code{iType = "common"}.
 
 \strong{\code{sequence} is "simultaneous":}
 
@@ -83,4 +101,21 @@ is \strong{not} a response style (column \emph{i}), tendency to choose middle
 \emph{categories} (column \emph{e}) and tendency to choose cquiescence
 \emph{categories} (column \emph{a}) contribute alltogether to propensity
 of choosing each response.
+}
+\examples{
+# Bockenholt 2017: 73
+(bockenholtMAE5 <- make_scoring_matrix_aem(5, "mae"))
+# Bockenholt 2017: 76
+(bockenholtMAE6 <- make_scoring_matrix_aem(6, "mae"))
+# Bockenholt 2017: 77
+(bockenholtAEM6 <- make_scoring_matrix_aem(6, "aem"))
+# Plieninger 2016: 39
+(plieninger5 <- make_scoring_matrix_aem(5, "simultaneous"))
+(plieninger5r <- make_scoring_matrix_aem(5, "simultaneous", reversed = TRUE))
+
+# some more complicated cases:
+make_scoring_matrix_aem(10, "ema", nMiddle = 3, nExtreme = 2)
+make_scoring_matrix_aem(10, "ema", nMiddle = 3, nExtreme = 2,
+                        aType = "common", iType = "common")
+make_scoring_matrix_aem(9, "mae", nMiddle = 3, nExtreme = 2, reversed = TRUE)
 }

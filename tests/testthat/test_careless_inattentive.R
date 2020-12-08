@@ -21,6 +21,7 @@ vcovTraitsSml <- matrix(0, nrow = ncol(sMSml) + 1, ncol = ncol(sMSml) + 1,
 diag(vcovTraitsSml) <- 0.1
 expectedTraitsSml <- setNames(c(2, rep(0, ncol(vcovTraitsSml) - 1)),
                               colnames(vcovTraitsSml))
+thetaSml = mvtnorm::rmvnorm(50, expectedTraitsSml, vcovTraitsSml)
 
 sMSqt <- make_scoring_matrix_aem(1:5, "mae")
 slopesSqt <- matrix(c(rep(10, nItems),
@@ -44,6 +45,7 @@ vcovTraitsSqt <- matrix(0, nrow = ncol(sMSqt) + 1, ncol = ncol(sMSqt) + 1,
 diag(vcovTraitsSqt) <- 0.1
 expectedTraitsSqt <- setNames(c(2, rep(0, ncol(vcovTraitsSqt) - 1)),
                               colnames(vcovTraitsSqt))
+thetaSqt = mvtnorm::rmvnorm(50, expectedTraitsSqt, vcovTraitsSqt)
 ################################################################################
 # very intense straightlining with aem - simultaneous
 itemsSSml <- vector(mode = "list", length = nItems)
@@ -54,8 +56,7 @@ for (i in 1:nItems) {
                                 score_on_last_answer_straight)
 }
 set.seed(26112020)
-respSSml <- generate_test_responses(vcovTraitsSml, itemsSSml, n = 50,
-                                    traitMeans = expectedTraitsSml)
+respSSml <- generate_test_responses(thetaSml, itemsSSml)
 respSSml <- apply(respSSml, 1:2, as.numeric)
 colnames(respSSml) <- paste0("i", 1:ncol(respSSml))
 
@@ -73,8 +74,7 @@ for (i in 1:nItems) {
                                 score_on_last_answer_straight)
 }
 set.seed(26112020)
-respSSqt <- generate_test_responses(vcovTraitsSqt, itemsSSqt, n = 50,
-                                    traitMeans = expectedTraitsSqt)
+respSSqt <- generate_test_responses(thetaSqt, itemsSSqt)
 respSSqt <- apply(respSSqt, 1:2, as.numeric)
 colnames(respSSqt) <- paste0("i", 1:ncol(respSSqt))
 
@@ -92,8 +92,7 @@ for (i in 1:nItems) {
                                 score_on_previous_answers_bounce)
 }
 set.seed(26112020)
-respBSml <- generate_test_responses(vcovTraitsSml, itemsBSml, n = 50,
-                                 traitMeans = expectedTraitsSml)
+respBSml <- generate_test_responses(thetaSml, itemsBSml)
 respBSml <- apply(respBSml, 1:2, as.numeric)
 colnames(respBSml) <- paste0("i", 1:ncol(respBSml))
 
@@ -113,8 +112,7 @@ for (i in 1:nItems) {
                                 score_on_previous_answers_bounce)
 }
 set.seed(26112020)
-respBSqt <- generate_test_responses(vcovTraitsSqt, itemsBSqt, n = 50,
-                                 traitMeans = expectedTraitsSqt)
+respBSqt <- generate_test_responses(thetaSqt, itemsBSqt)
 respBSqt <- apply(respBSqt, 1:2, as.numeric)
 colnames(respBSqt) <- paste0("i", 1:ncol(respBSqt))
 
@@ -134,8 +132,7 @@ for (i in 1:nItems) {
                                 score_on_last_answer_next)
 }
 set.seed(26112020)
-respNSml <- generate_test_responses(vcovTraitsSml, itemsNSml, n = 50,
-                                 traitMeans = expectedTraitsSml)
+respNSml <- generate_test_responses(thetaSml, itemsNSml)
 respNSml <- apply(respNSml, 1:2, as.numeric)
 colnames(respNSml) <- paste0("i", 1:ncol(respNSml))
 
@@ -155,8 +152,7 @@ for (i in 1:nItems) {
                                 score_on_last_answer_next)
 }
 set.seed(26112020)
-respNSqt <- generate_test_responses(vcovTraitsSqt, itemsNSqt, n = 50,
-                                 traitMeans = expectedTraitsSqt)
+respNSqt <- generate_test_responses(thetaSqt, itemsNSqt)
 respNSqt <- apply(respNSqt, 1:2, as.numeric)
 colnames(respNSqt) <- paste0("i", 1:ncol(respNSqt))
 
@@ -176,8 +172,7 @@ for (i in 1:nItems) {
                                 score_on_last_answer_previous)
 }
 set.seed(26112020)
-respPSml <- generate_test_responses(vcovTraitsSml, itemsPSml, n = 50,
-                                 traitMeans = expectedTraitsSml)
+respPSml <- generate_test_responses(thetaSml, itemsPSml)
 respPSml <- apply(respPSml, 1:2, as.numeric)
 colnames(respPSml) <- paste0("i", 1:ncol(respPSml))
 
@@ -197,8 +192,7 @@ for (i in 1:nItems) {
                                 score_on_last_answer_previous)
 }
 set.seed(26112020)
-respPSqt <- generate_test_responses(vcovTraitsSqt, itemsPSqt, n = 50,
-                                 traitMeans = expectedTraitsSqt)
+respPSqt <- generate_test_responses(thetaSqt, itemsPSqt)
 respPSqt <- apply(respPSqt, 1:2, as.numeric)
 colnames(respPSqt) <- paste0("i", 1:ncol(respPSqt))
 

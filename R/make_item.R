@@ -1,14 +1,3 @@
-# generate_test <- function(nItems, a, d, b = NULL) {
-#   stopifnot(is.numeric(nItems),
-#             length(nItem) == 1,
-#             !is.na(nItems),
-#             is.list(a),
-#             is.list(d))
-#   if (!is.null(b)) {
-#     stopifnot(is.numeric(b),
-#               length(b) == nItems)
-#   }
-# }
 #' @title Internals: making object representing an item
 #' @description Function mostly performs checks whether provided parameters are
 #' reasonable and match each other.
@@ -54,11 +43,6 @@ make_item <- function(scoringMatrix, slopes, intercepts,
               mode == 'sequential' || !anyNA(scoringMatrix),
             "Parameter `scoringMatrix` can't contain NAs in the first column." =
               !anyNA(scoringMatrix[, 1L]),
-            "In each row of `scoringMatrix` NA element can't be followed by a non-NA element." =
-              all(apply(scoringMatrix, 1L, function(x) {
-                return(max(which(!is.na(x))) < ifelse(anyNA(x),
-                                                      min(which(is.na(x))),
-                                                      length(x) + 1L))})),
             "Parameter 'scoringMatrix` can't contain duplicated rows." =
               all(!duplicated(scoringMatrix)),
             "Parameter `slopes` must be a numeric vector." =
@@ -84,7 +68,7 @@ make_item <- function(scoringMatrix, slopes, intercepts,
     for (i in 1L:ncol(scoringMatrix)) {
       if (length(setdiff(unique(scoringMatrix[, i]), NA_integer_)) !=
           (length(grep(paste0("^", colnames(scoringMatrix)[i],
-                              "[[:digit:]]+$"), names(intercepts))) + 1)) {
+                              "_?[[:digit:]]+$"), names(intercepts))) + 1)) {
         stop("Number of intercepts provided for trait '",
              colnames(scoringMatrix)[i],
              "' doesn't match number of distinct scores for this trait in the scoring matrix (there should be one more distinct scores than number of intercepts).")

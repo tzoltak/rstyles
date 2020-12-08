@@ -2,10 +2,9 @@
 #' @description Generates simulated responses to a test given inforamations
 #' about items and parameters of joint multivariate normal distribution of
 #' latent traits.
-#' @param traitCov covariance matrix of traits
+#' @param theta matrix (or data frame) of already generated latent traits'
+#' values
 #' @param items list with test items' specification
-#' @param n number of observations
-#' @param traitMeans expected values of traits
 #' @param performAssertions logical value indicating whether function should
 #' perform assertions of the other parameters (\code{TRUE} by default, may be
 #' changed to \code{FALSE} for a little performance gain)
@@ -13,49 +12,32 @@
 #' \code{\link{generate_item_responses_sqn}},
 #' \code{\link{generate_item_responses_sml}}
 #' @export
-generate_test_responses <- function(traitCov, items, n,
-                                    traitMeans = rep(0, ncol(traitCov)),
-                                    performAssertions = TRUE) {
+generate_test_responses <- function(theta, items, performAssertions = TRUE) {
   if (performAssertions) {
-    stopifnot("Parameter `traitCov` must be a numeric matrix." =
-                is.matrix(traitCov),
-              "Parameter `traitCov` must be a numeric matrix." =
-                is.numeric(traitCov),
-              "Parameter `traitCov` must be a symmetrix matrix (with the same names of rows and columns)." =
-                isSymmetric(traitCov),
-              "Parameter `traitCov` can't contain NAs." = all(!is.na(traitCov)),
+    if (is.data.frame(theta)) {
+      theta <- as.matrix(theta)
+    }
+    stopifnot("Parameter `theta` must be a numeric matrix." =
+                is.matrix(theta),
+              "Parameter `theta` must be a numeric matrix." =
+                is.numeric(theta),
+              "Parameter `theta` must have at least one row." = nrow(theta) > 0,
+              "Parameter `theta` can't contain NAs." = all(!is.na(theta)),
               "Parameter `items` must be a list of class 'itemList'" =
                 is.list(items),
               "Each element of `items` must be of class 'rstylesItem'" =
-                all(sapply(items, inherits, what = "rstylesItem")),
-              "Parameter `n` must be a numeric vector." = is.numeric(n),
-              "Parameter `n` must be of length one." = length(n) == 1L,
-              "Parameter `n` must be an integer." = as.integer(n) == n,
-              "Parameter `traitMeans` must be a numeric vector." =
-                is.numeric(traitMeans),
-              "Parameter `traitMeans` must have the same number of elements as the number of columns in `traitCov`." =
-                length(traitMeans) %in% c(1L, ncol(traitCov)),
-              "Parameter `traitMeans` can't contain NAs." =
-                all(!is.na(traitMeans)))
+                all(sapply(items, inherits, what = "rstylesItem")))
     traitNames <- sapply(items, function(x) {return(names(x$slopes))})
     traitNames <- unique(as.vector(traitNames))
-    if (!all(traitNames %in% colnames(traitCov))) {
+    traitNames <- sub("[[:digit:]]+$", "", traitNames)
+    if (!all(traitNames %in% colnames(theta))) {
       stop("Items refer to latent traits that don't appear in the provided covariance matrix of latent traits: '",
-           paste(setdiff(traitNames, colnames(traitCov)), collapse = "', '"),
+           paste(setdiff(traitNames, colnames(theta)), collapse = "', '"),
            "'.")
     }
   }
 
-  if (length(traitMeans) == 1L) {
-    traitMeans <- rep(traitMeans, ncol(traitCov))
-  }
-  theta = mvtnorm::rmvnorm(n, traitMeans, traitCov)
-  if (anyNA(theta)) {
-    stop("Generating values of latent traits failed - there were NAs generated.")
-  }
-  colnames(theta) <- colnames(traitCov)
-
-  responses = matrix(NA_integer_, nrow = n, ncol = length(items))
+  responses = matrix(NA_integer_, nrow = nrow(theta), ncol = length(items))
   for (i in 1L:ncol(responses)) {
     scoringMatrix <- items[[i]]$scoringMatrix
     # dispatch for speed
@@ -133,12 +115,14 @@ generate_test_responses <- function(traitCov, items, n,
 generate_item_responses_sqn <- function(theta, scoringMatrix, slopes,
                                         intercepts, editResponse = NULL,
                                         decidingOnPreviousResponse = FALSE) {
-  thetaAtNode <- theta[, which(colnames(theta) == colnames(scoringMatrix)[1L]),
-                       drop = FALSE]
   slopeAtNode <- slopes[which(names(slopes) == colnames(scoringMatrix)[1L])]
   interceptsAtNode <-
     intercepts[c(1L, grep(paste0("^", names(slopeAtNode),
-                                 "[[:digit:]]+"), names(intercepts)))]
+                                 "_?[[:digit:]]+"), names(intercepts)))]
+  thetaAtNode <- theta[, sapply(colnames(theta),
+                                function(x, y) {substr(y, 1, nchar(x)) == x},
+                                y = names(slopeAtNode)),
+                       drop = FALSE]
   scoringMatrixAtNode <-
     matrix(scoringMatrix[!duplicated(scoringMatrix[, 1L]), 1L], ncol = 1,
            dimnames = list(NULL, colnames(scoringMatrix)[1L]))
@@ -171,7 +155,7 @@ generate_item_responses_sqn <- function(theta, scoringMatrix, slopes,
           TRUE), drop = FALSE]
       interceptsNextNode <-
         intercepts[-grep(paste0("^", names(slopeAtNode),
-                                "[[:digit:]]+"), names(intercepts))]
+                                "_?[[:digit:]]+"), names(intercepts))]
       nPossibleResponsesNextNode <-
         length(setdiff(unique(scoringMatrixNextNode[, 1L]), NA))
       if (nPossibleResponsesNextNode > 1L) {

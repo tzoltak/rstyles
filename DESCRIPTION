@@ -24,12 +24,11 @@ Description: Package allows to generate simulated datasests using algorithms
     acquiesce (ARS) and also careless/inattentive responding (CR, IR).
 License: MIT + file LICENSE
 Depends: R (>= 4.0.0)
-Imports:
-    mvtnorm
 Suggests:
     testthat,
     covr,
     knitr,
+    mvtnorm,
     rmarkdown,
     mirt
 VignetteBuilder: knitr

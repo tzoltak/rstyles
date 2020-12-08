@@ -4,22 +4,13 @@
 \alias{generate_test_responses}
 \title{Generate simulated data}
 \usage{
-generate_test_responses(
-  traitCov,
-  items,
-  n,
-  traitMeans = rep(0, ncol(traitCov)),
-  performAssertions = TRUE
-)
+generate_test_responses(theta, items, performAssertions = TRUE)
 }
 \arguments{
-\item{traitCov}{covariance matrix of traits}
+\item{theta}{matrix (or data frame) of already generated latent traits'
+values}
 
 \item{items}{list with test items' specification}
-
-\item{n}{number of observations}
-
-\item{traitMeans}{expected values of traits}
 
 \item{performAssertions}{logical value indicating whether function should
 perform assertions of the other parameters (\code{TRUE} by default, may be
