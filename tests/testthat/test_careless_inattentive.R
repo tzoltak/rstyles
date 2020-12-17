@@ -21,7 +21,7 @@ vcovTraitsSml <- matrix(0, nrow = ncol(sMSml) + 1, ncol = ncol(sMSml) + 1,
 diag(vcovTraitsSml) <- 0.1
 expectedTraitsSml <- setNames(c(2, rep(0, ncol(vcovTraitsSml) - 1)),
                               colnames(vcovTraitsSml))
-thetaSml = mvtnorm::rmvnorm(50, expectedTraitsSml, vcovTraitsSml)
+thetaSml = mnormt::rmnorm(50, mean = expectedTraitsSml, varcov = vcovTraitsSml)
 
 sMSqt <- make_scoring_matrix_aem(1:5, "mae")
 slopesSqt <- matrix(c(rep(10, nItems),
@@ -45,7 +45,7 @@ vcovTraitsSqt <- matrix(0, nrow = ncol(sMSqt) + 1, ncol = ncol(sMSqt) + 1,
 diag(vcovTraitsSqt) <- 0.1
 expectedTraitsSqt <- setNames(c(2, rep(0, ncol(vcovTraitsSqt) - 1)),
                               colnames(vcovTraitsSqt))
-thetaSqt = mvtnorm::rmvnorm(50, expectedTraitsSqt, vcovTraitsSqt)
+thetaSqt = mnormt::rmnorm(50, mean = expectedTraitsSqt, varcov = vcovTraitsSqt)
 ################################################################################
 # very intense straightlining with aem - simultaneous
 itemsSSml <- vector(mode = "list", length = nItems)

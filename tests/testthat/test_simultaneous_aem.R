@@ -19,7 +19,7 @@ for (i in 1:nItems) {
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
                      dimnames = list(colnames(sM), colnames(sM)))
 diag(vcovTraits) <- 1
-theta = mvtnorm::rmvnorm(1000, sigma = vcovTraits, )
+theta = mnormt::rmnorm(1000, varcov = vcovTraits)
 colnames(theta) <- colnames(vcovTraits)
 
 resp <- generate_test_responses(theta, items)

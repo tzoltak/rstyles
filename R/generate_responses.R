@@ -1,5 +1,5 @@
 #' @title Generate simulated data
-#' @description Generates simulated responses to a test given inforamations
+#' @description Generates simulated responses to a test given informations
 #' about items and parameters of joint multivariate normal distribution of
 #' latent traits.
 #' @param theta matrix (or data frame) of already generated latent traits'
@@ -211,7 +211,7 @@ generate_item_responses_sml <- function(theta, scoringMatrix, slopes,
 }
 #' @title Internals: calculation of (G)PCM probabilities and drawing responses
 #' @description Computes probabilities of each response using (G)PCM and draws
-#' responses. Be awawre that for efficiency reasons it assumes  that
+#' responses. Be aware that for efficiency reasons it assumes  that
 #' \strong{\code{theta} and \code{weightsMatrix} have the same number and order
 #' of columns} (unlike \code{\link{generate_item_responses_sqn}} and
 #' \code{\link{generate_item_responses_sml}} that are used to match theirs

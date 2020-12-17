@@ -5,8 +5,8 @@
 #' of the matrix) map on \emph{scores} of latent traits (described in columns of
 #' the matrix)
 #' @param slopes \strong{named} numeric vector of slope parameters with names describing
-#' latent variables matchng each slope (must contain at least all the names
-#' occuring in column names of the \code{scoringMatrix} but may also contain
+#' latent variables matching each slope (must contain at least all the names
+#' occurring in column names of the \code{scoringMatrix} but may also contain
 #' additional slopes matching latent traits scoring patterns on which will be
 #' returned by functions provided with parameters
 #' \code{scoringOnPreviousResponses} or \code{editResponse})

@@ -58,9 +58,9 @@ response (represented in rows).
 
 For number of responses between 5 and 6 function generates scoring
 matrix in a way mimicking Böckenholt's approach (2017) to describe
-response to the item as a sequence of binary decissions involving choosing
+response to the item as a sequence of binary decisions involving choosing
 of the middle, extreme and acquiescence categories - this decisions may be
-made in diferent order, what is controlled by parameter \code{sequence}.
+made in different order, what is controlled by parameter \code{sequence}.
 
 Please note that following Böckenholt \emph{acquiescence} trait is managed in
 a little different way that the other two. If choice involving
@@ -68,27 +68,27 @@ a little different way that the other two. If choice involving
 different combinations of values in previous columns of the scoring matrix),
 separate column describing decision in each node (for each combination) is
 created by default (and names of these columns are \emph{a} followed by
-integer index). That allows for specyfing different IRT parameters for each
+integer index). That allows for specifying different IRT parameters for each
 node. Setting parameter \code{aType = "common"} allows to collapse these
 column into one if you want to constrain model parameters between nodes in
-a convienient way.
+a convenient way.
 
 With less than 5 possible responses functions apply the same logic, but not
-all of the three aformentioned styles can be invloved because lack of
-variablity in possible responses.
+all of the three aforementioned styles can be involved because lack of
+variability in possible responses.
 
-With more than 6 possible responses there must be odditional trait added to
+With more than 6 possible responses there must be additional trait added to
 scoringMatrix to describe process of choice between all the possible
 responses. In such a case function adds additional columns to a scoring
-matrix that names are \emph{i} (standing for intensity) folowed by an index
+matrix that names are \emph{i} (standing for intensity) followed by an index
 and are filled up with scores for such combinations of values in previous
 columns of the scoring matrix that occur more than once. Scores in these
 columns are sequences of non-negative integers either increasing
 (\code{reversed=FALSE}) or decreasing (\code{reversed=TRUE}) that are
-generted independent for each unique combination of values in the previous
-columns and by deafult each of such combinations is described by a separate
+generated independent for each unique combination of values in the previous
+columns and by default each of such combinations is described by a separate
 column (allowing for specification of different model parameters).
-Analogously to \emph{acquiescence} trait these colmns can be collapsed into
+Analogously to \emph{acquiescence} trait these columns can be collapsed into
 one by setting \code{iType = "common"}.
 
 \strong{\code{sequence} is "simultaneous":}
@@ -98,8 +98,8 @@ Plieninger (2016), i.e. assuming that response process is
 a \emph{simultaneous} and four factors: intensity of the trait that
 is \strong{not} a response style (column \emph{i}), tendency to choose middle
 \emph{categories} (column \emph{m}) tendency to choose extreme
-\emph{categories} (column \emph{e}) and tendency to choose cquiescence
-\emph{categories} (column \emph{a}) contribute alltogether to propensity
+\emph{categories} (column \emph{e}) and tendency to choose acquiescence
+\emph{categories} (column \emph{a}) contribute altogether to propensity
 of choosing each response.
 }
 \examples{

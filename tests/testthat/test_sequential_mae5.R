@@ -19,7 +19,7 @@ for (i in 1:nItems) {
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
                      dimnames = list(colnames(sM), colnames(sM)))
 diag(vcovTraits) <- 1
-theta = mvtnorm::rmvnorm(1000, sigma = vcovTraits, )
+theta = mnormt::rmnorm(1000, varcov = vcovTraits)
 colnames(theta) <- colnames(vcovTraits)
 
 resp <- generate_test_responses(theta, items)
@@ -57,11 +57,11 @@ test_that("Item parameters of sequential M, A, E RS (with 5-point scale) recover
 # diag(cor(slopes, estItemPars[, 1:3]))
 # diag(cor(intercepts, estItemPars[, 4:6]))
 # cat("MSE:\n")
-# round(c(i = mean((slopes[, 1] - estItemPars[, 1])^2),
-#         m = mean((slopes[, 2] - estItemPars[, 2])^2),
+# round(c(m = mean((slopes[, 1] - estItemPars[, 1])^2),
+#         a = mean((slopes[, 2] - estItemPars[, 2])^2),
 #         e = mean((slopes[, 3] - estItemPars[, 3])^2),
-#         d1 = mean((intercepts[, 1] - estItemPars[, 4])^2),
-#         d2 = mean((intercepts[, 2] - estItemPars[, 5])^2),
-#         d3 = mean((intercepts[, 3] - estItemPars[, 6])^2)), 3)
+#         dm = mean((intercepts[, 1] - estItemPars[, 4])^2),
+#         da = mean((intercepts[, 2] - estItemPars[, 5])^2),
+#         de = mean((intercepts[, 3] - estItemPars[, 6])^2)), 3)
 
 rm(list = ls())

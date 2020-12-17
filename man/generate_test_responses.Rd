@@ -22,7 +22,7 @@ matrix with responses on items
 \code{\link{generate_item_responses_sml}}
 }
 \description{
-Generates simulated responses to a test given inforamations
+Generates simulated responses to a test given informations
 about items and parameters of joint multivariate normal distribution of
 latent traits.
 }

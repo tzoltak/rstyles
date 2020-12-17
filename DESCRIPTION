@@ -1,7 +1,7 @@
 Package: rstyles
 Type: Package
-Title: Generating simulated data mimicking response styles to survey questions
-Version: 0.1.0
+Title: Generating Simulated Data Mimicking Response Styles to Survey Questions
+Version: 0.2.0
 Authors@R: c(person("Tomasz", "\u017b\u00F3\u0142tak",
                     email = "tomek@zozlak.org",
                     role = c("aut", "cre"),
@@ -14,12 +14,12 @@ Authors@R: c(person("Tomasz", "\u017b\u00F3\u0142tak",
                     email = "marek.a.muszynski@gmail.com",
                     role = c("aut"),
                     comment= c(ORCID = "0000-0002-9306-1237")))
-Maintainer: "Tomasz \u017b\u00F3\u0142tak <tomek@zozlak.org>
-Description: Package allows to generate simulated datasests using algorithms
-    that mimick different response styles to survey questions using: 1) IRTree
+Maintainer: Tomasz \u017b\u00F3\u0142tak <tomek@zozlak.org>
+Description: Package allows to generate simulated datasets using algorithms
+    that mimic different response styles to survey questions using: 1) IRTree
     approach, 2) (G)PCM (and rating scale version of a partial credit model)
     approach, 3) user provided function that (with some probability) chooses
-    response using information about prevoius responses. This allows to cover
+    response using information about previous responses. This allows to cover
     wide range of potential response styles like: extreme and middle (ERS, MRS),
     acquiesce (ARS) and also careless/inattentive responding (CR, IR).
 License: MIT + file LICENSE
@@ -28,10 +28,9 @@ Suggests:
     testthat,
     covr,
     knitr,
-    mvtnorm,
+    mnormt,
     rmarkdown,
     mirt
-VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

@@ -19,7 +19,7 @@ vector of responses on item
 }
 \description{
 Computes probabilities of each response using (G)PCM and draws
-responses. Be awawre that for efficiency reasons it assumes  that
+responses. Be aware that for efficiency reasons it assumes  that
 \strong{\code{theta} and \code{weightsMatrix} have the same number and order
 of columns} (unlike \code{\link{generate_item_responses_sqn}} and
 \code{\link{generate_item_responses_sml}} that are used to match theirs
