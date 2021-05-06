@@ -1,15 +1,15 @@
-#' @title Internals: making object representing an item
-#' @description Function mostly performs checks whether provided parameters are
+#' @title Creating object representing an item
+#' @description Function mostly performs checks whether provided arguments are
 #' reasonable and match each other.
 #' @param scoringMatrix matrix describing how responses (described in rownames
 #' of the matrix) map on \emph{scores} of latent traits (described in columns of
 #' the matrix)
-#' @param slopes \strong{named} numeric vector of slope parameters with names describing
-#' latent variables matching each slope (must contain at least all the names
-#' occurring in column names of the \code{scoringMatrix} but may also contain
-#' additional slopes matching latent traits scoring patterns on which will be
-#' returned by functions provided with parameters
-#' \code{scoringOnPreviousResponses} or \code{editResponse})
+#' @param slopes \strong{named} numeric vector of slope (discrimination)
+#' parameters with names describing latent variables matching each slope
+#' (must contain at least all the names occurring in column \emph{names} of the
+#' \code{scoringMatrix} but may also contain additional slopes matching latent
+#' traits scoring patterns that will be returned by functions provided with
+#' arguments \code{scoringOnPreviousResponses} or \code{editResponse})
 #' @param intercepts numeric vector of intercept parameters (must be shorter
 #' of one than number of rows in the \\code{scoringMatrix} or the same length
 #' but with the first element being 0)
@@ -21,48 +21,52 @@
 #' @param editResponse only if \code{mode='sequential'}: optional function
 #' returning scoring matrix that should replace that provided by
 #' \code{scoringMatrix} after \emph{response is made} at the first \emph{node};
-#' this should be function accepting two parameters: \code{response} - generated
+#' this should be function accepting two arguments: \code{response} - generated
 #' response (by the model described with the first column of the
 #' \code{scoringMatrix}) that is supposed to be \emph{edited} and
 #' \code{scoringMatrix} - current scoring matrix (to be replaced)
+#' @returns Object of class \emph{rstylesItem} representing an item. List of
+#' such objects is passed as a test specification to
+#' \code{\link{generate_test_responses}}.
 #' @export
 make_item <- function(scoringMatrix, slopes, intercepts,
                       mode = c('sequential', 'simultaneous'),
                       scoringOnPreviousResponses = NULL, editResponse = NULL) {
-  stopifnot("Parameter `scoringMatrix` must be a numeric matrix." =
+  mode <- match.arg(mode)
+  stopifnot("Argument `scoringMatrix` must be a numeric matrix." =
               is.matrix(scoringMatrix),
-            "Parameter `scoringMatrix` must be a numeric matrix." =
+            "Argument `scoringMatrix` must be a numeric matrix." =
               is.numeric(scoringMatrix),
-            "Parameter `scoringMatrix` must have at least one column." =
+            "Argument `scoringMatrix` must have at least one column." =
               ncol(scoringMatrix) > 0L,
-            "Parameter `scoringMatrix` must have at least two rows." =
+            "Argument `scoringMatrix` must have at least two rows." =
               nrow(scoringMatrix) > 1L,
-            "Parameter `scoringMatrix` must have unique rownames." =
+            "Argument `scoringMatrix` must have unique rownames." =
               length(unique(rownames(scoringMatrix))) == nrow(scoringMatrix),
-            "With parameter `mode` set to 'simultaneous` parameter `scoringMatrix` can't contain NAs." =
+            "With argument `mode` set to 'simultaneous` argument `scoringMatrix` can't contain NAs." =
               mode == 'sequential' || !anyNA(scoringMatrix),
-            "Parameter `scoringMatrix` can't contain NAs in the first column." =
+            "Argument `scoringMatrix` can't contain NAs in the first column." =
               !anyNA(scoringMatrix[, 1L]),
-            "Parameter 'scoringMatrix` can't contain duplicated rows." =
+            "Argument 'scoringMatrix` can't contain duplicated rows." =
               all(!duplicated(scoringMatrix)),
-            "Parameter `slopes` must be a numeric vector." =
+            "Argument `slopes` must be a numeric vector." =
               is.vector(slopes),
-            "Parameter `slopes` must be a numeric vector." =
+            "Argument `slopes` must be a numeric vector." =
               is.numeric(slopes),
-            "Parameter `slopes` can't contain NAs." =
+            "Argument `slopes` can't contain NAs." =
               !anyNA(slopes),
-            "Elements of parameter `slopes` must have unique names." =
+            "Elements of argument `slopes` must have unique names." =
               all(!duplicated(names(slopes))),
             "All the colnames of `scoringMatrix` must appear in names of `slopes`." =
               all(colnames(scoringMatrix) %in% names(slopes)),
-            "With no parameters `scoringOnPreviousResponses` or `editResponse` being provided, all the names of `slopes` must appear in names of `scoringMatrix`." =
+            "With no arguments `scoringOnPreviousResponses` or `editResponse` being provided, all the names of `slopes` must appear in names of `scoringMatrix`." =
               !is.null(scoringOnPreviousResponses) | !is.null(editResponse) |
               all(names(slopes) %in% colnames(scoringMatrix)),
-            "Parameter `intercepts` must be a numeric vector." =
+            "Argument `intercepts` must be a numeric vector." =
               is.numeric(intercepts),
-            "Parameter `intercepts` must be a numeric vector." =
+            "Argument `intercepts` must be a numeric vector." =
               is.vector(intercepts),
-            "Parameter `intercepts` can't contain NAs." =
+            "Argument `intercepts` can't contain NAs." =
               !anyNA(intercepts))
   if (mode == "sequential") {
     for (i in 1L:ncol(scoringMatrix)) {
@@ -76,7 +80,7 @@ make_item <- function(scoringMatrix, slopes, intercepts,
     }
     intercepts <- c(d0 = 0, intercepts)
   } else {
-    stopifnot("Parameter `intercepts` must have the same length or be shorter by one than a number of rows of `scoringMatrix`." =
+    stopifnot("Argument `intercepts` must have the same length or be shorter by one than a number of rows of `scoringMatrix`." =
                 length(intercepts) %in% (nrow(scoringMatrix) - c(0L, 1L)),
               "If length of `intercepts` is the same as number of rows of `scoringMatrix`, the first element of `intercepts` must be 0." =
                 length(intercepts) == (nrow(scoringMatrix) - 1L) | intercepts[1L] == 0)
@@ -85,9 +89,9 @@ make_item <- function(scoringMatrix, slopes, intercepts,
     }
   }
   if (!is.null(scoringOnPreviousResponses)) {
-    stopifnot("Parameter `scoringOnPreviousResponses` must be a function." =
+    stopifnot("Argument `scoringOnPreviousResponses` must be a function." =
                 is.function(scoringOnPreviousResponses),
-              "Function provided by parameter `scoringOnPreviousResponses` must accept parameters `previousResponses` and `scoringMatrix`." =
+              "Function provided by argument `scoringOnPreviousResponses` must accept arguments `previousResponses` and `scoringMatrix`." =
                 all(c("previousResponses", "scoringMatrix") %in%
                       names(formals(scoringOnPreviousResponses))))
     traitNames <- lapply(rownames(scoringMatrix),
@@ -95,15 +99,15 @@ make_item <- function(scoringMatrix, slopes, intercepts,
                          scoringMatrix)
     traitNames <- unique(sapply(traitNames, colnames))
     if (!all(traitNames %in% names(slopes))) {
-      stop("Function provided by parameter `scoringOnPreviousResponses` returns scoring pattern regarding trait(s): '",
+      stop("Function provided by argument `scoringOnPreviousResponses` returns scoring pattern regarding trait(s): '",
            paste(setdiff(traitNames, names(slopes)), collapse = "', '"),
            "' but there is/are no slope(s) provided for this trait(s).")
     }
   }
   if (!is.null(editResponse)) {
-    stopifnot("Parameter `editResponse` must be a function." =
+    stopifnot("Argument `editResponse` must be a function." =
                 is.function(editResponse),
-              "Function provided by parameter `editResponse` must accept parameters `response` and `scoringMatrix`." =
+              "Function provided by argument `editResponse` must accept arguments `response` and `scoringMatrix`." =
                 all(c("response", "scoringMatrix") %in%
                     names(formals(editResponse))))
     traitNames <- lapply(rownames(scoringMatrix),
@@ -111,7 +115,7 @@ make_item <- function(scoringMatrix, slopes, intercepts,
                          scoringMatrix)
     traitNames <- unique(sapply(traitNames, colnames))
     if (!all(traitNames %in% names(slopes))) {
-      stop("Function provided by parameter `editResponse` returns scoring pattern regarding trait(s): '",
+      stop("Function provided by argument `editResponse` returns scoring pattern regarding trait(s): '",
            paste(setdiff(traitNames, names(slopes)), collapse = "', '"),
            "' but there is/are no slope(s) provided for this trait(s).")
     }

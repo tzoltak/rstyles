@@ -1,5 +1,5 @@
 #' @title Helper functions for manipulating generated responses
-#' @description Using scoring matrix provided as a second parameter function
+#' @description Using scoring matrix provided as its second argument function
 #' \emph{expands} (recodes) responses to each item (column) in a provided matrix
 #' of responses into a set of variables that may be put into model estimation.
 #' @param responses matrix of responses with items in columns and observations

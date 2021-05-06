@@ -19,8 +19,8 @@ make_scoring_matrix_aem(
 \item{responses}{vector of available responses (\emph{categories}) - can be
 a character vector or positive integer describing number of responses}
 
-\item{sequence}{sequence of decisions made by a \emph{respondent}, determined
-by order of codes in a string:
+\item{sequence}{text: "simultaneous" or a three-letters sequence describing
+the order of decisions made by a \emph{respondent}:
 \itemize{
   \item{'m' stands for choosing between middle \emph{category} and some other
         \emph{category}}
@@ -60,7 +60,7 @@ For number of responses between 5 and 6 function generates scoring
 matrix in a way mimicking Böckenholt's approach (2017) to describe
 response to the item as a sequence of binary decisions involving choosing
 of the middle, extreme and acquiescence categories - this decisions may be
-made in different order, what is controlled by parameter \code{sequence}.
+made in different order, what is controlled by argument \code{sequence}.
 
 Please note that following Böckenholt \emph{acquiescence} trait is managed in
 a little different way that the other two. If choice involving
@@ -69,7 +69,7 @@ different combinations of values in previous columns of the scoring matrix),
 separate column describing decision in each node (for each combination) is
 created by default (and names of these columns are \emph{a} followed by
 integer index). That allows for specifying different IRT parameters for each
-node. Setting parameter \code{aType = "common"} allows to collapse these
+node. Setting argument \code{aType = "common"} allows to collapse these
 column into one if you want to constrain model parameters between nodes in
 a convenient way.
 

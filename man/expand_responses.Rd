@@ -16,7 +16,7 @@ in rows}
 matrix (of integers)
 }
 \description{
-Using scoring matrix provided as a second parameter function
+Using scoring matrix provided as its second argument function
 \emph{expands} (recodes) responses to each item (column) in a provided matrix
 of responses into a set of variables that may be put into model estimation.
 }

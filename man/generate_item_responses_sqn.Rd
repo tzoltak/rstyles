@@ -24,7 +24,7 @@ generate_item_responses_sqn(
 
 \item{editResponse}{optional function returning scoring matrix that should be
 used instead that provided by \code{scoringMatrix}; this should be function
-accepting two parameters: \code{response} - generated response (by the model
+accepting two arguments: \code{response} - generated response (by the model
 described with the first column of the \code{scoringMatrix}) that is supposed
 to be \emph{edited} and \code{scoringMatrix} - current scoring matrix (to be
 replaced)}

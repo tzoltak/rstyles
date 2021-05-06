@@ -23,6 +23,6 @@ responses. Be aware that for efficiency reasons it assumes  that
 \strong{\code{theta} and \code{weightsMatrix} have the same number and order
 of columns} (unlike \code{\link{generate_item_responses_sqn}} and
 \code{\link{generate_item_responses_sml}} that are used to match theirs
-parameters  \code{theta}, \code{scoringMatrix} and \code{slopes} before
+arguments \code{theta}, \code{scoringMatrix} and \code{slopes} before
 passing them to \code{generate_item_responeses_gpcm}).
 }

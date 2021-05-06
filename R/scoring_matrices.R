@@ -4,8 +4,8 @@
 #' response (represented in rows).
 #' @param responses vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
-#' @param sequence sequence of decisions made by a \emph{respondent}, determined
-#' by order of codes in a string:
+#' @param sequence text: "simultaneous" or a three-letters sequence describing
+#' the order of decisions made by a \emph{respondent}:
 #' \itemize{
 #'   \item{'m' stands for choosing between middle \emph{category} and some other
 #'         \emph{category}}
@@ -29,7 +29,7 @@
 #' matrix in a way mimicking Böckenholt's approach (2017) to describe
 #' response to the item as a sequence of binary decisions involving choosing
 #' of the middle, extreme and acquiescence categories - this decisions may be
-#' made in different order, what is controlled by parameter \code{sequence}.
+#' made in different order, what is controlled by argument \code{sequence}.
 #'
 #' Please note that following Böckenholt \emph{acquiescence} trait is managed in
 #' a little different way that the other two. If choice involving
@@ -38,7 +38,7 @@
 #' separate column describing decision in each node (for each combination) is
 #' created by default (and names of these columns are \emph{a} followed by
 #' integer index). That allows for specifying different IRT parameters for each
-#' node. Setting parameter \code{aType = "common"} allows to collapse these
+#' node. Setting argument \code{aType = "common"} allows to collapse these
 #' column into one if you want to constrain model parameters between nodes in
 #' a convenient way.
 #'
@@ -98,59 +98,48 @@ make_scoring_matrix_aem <- function(
   sequence = match.arg(sequence)
   aType = match.arg(aType)
   iType = match.arg(iType)
-  stopifnot("Paramater `responses` must be a vector." = is.vector(responses),
-            "Paramater `responses` can't contain duplicated values." =
-              all(!duplicated(responses)),
-            "Paramater `responses` must have at least two values or be a positive integer." =
-              length(responses) > 1L | is.numeric(responses),
-            "Paramater `responses` can't contain NAs." = !anyNA(responses))
-  if (length(responses) <= 1L) {
-    stopifnot("Paramater `responses` must have at least two values or be a positive integer." =
-                length(responses) == 1L,
-              "Paramater `responses` must have at least two values or be a positive integer." =
-                as.integer(responses) == responses,
-              "Paramater `responses` must have at least two values or be a positive integer larger than 1." =
-                responses > 1L)
-    responses = 1L:responses
+  responses <- assert_responses(responses)
+  if (inherits(responses, "try-error")) {
+    stop(sub("^.*: \\n +", "", responses))
   }
-  stopifnot("Paramater `nMiddle` must be a non-negative integer." =
+  stopifnot("Argument `nMiddle` must be a non-negative integer." =
               is.numeric(nMiddle),
-            "Paramater `nMiddle` must be a non-negative integer." =
+            "Argument `nMiddle` must be a non-negative integer." =
               length(nMiddle) == 1L,
-            "Paramater `nMiddle` can't contain NAs." =
+            "Argument `nMiddle` can't contain NAs." =
               !is.na(nMiddle),
-            "Paramater `nMiddle` must be a non-negative integer." =
+            "Argument `nMiddle` must be a non-negative integer." =
               as.integer(nMiddle) == nMiddle,
-            "Paramater `nMiddle` must be a non-negative integer." =
+            "Argument `nMiddle` must be a non-negative integer." =
               nMiddle >= 0L,
-            "Paramater `nExtreme` must be a non-negative integer." =
+            "Argument `nExtreme` must be a non-negative integer." =
               is.numeric(nExtreme),
-            "Paramater `nExtreme` must be a non-negative integer." =
+            "Argument `nExtreme` must be a non-negative integer." =
               length(nExtreme) == 1L,
-            "Paramater `nExtreme` can't contain NAs." =
+            "Argument `nExtreme` can't contain NAs." =
               !is.na(nExtreme),
-            "Paramater `nExtreme` must be a non-negative integer." =
+            "Argument `nExtreme` must be a non-negative integer." =
               as.integer(nExtreme) == nExtreme,
-            "Paramater `nExtreme` must be a non-negative integer." =
+            "Argument `nExtreme` must be a non-negative integer." =
               nExtreme >= 0L)
   if (length(responses) %% 2L != nMiddle %% 2L) {
     nMiddle <- nMiddle - 1L
   }
-  stopifnot("Paramater `nAcquiescence` must be a non-negative integer." =
+  stopifnot("Argument `nAcquiescence` must be a non-negative integer." =
               is.numeric(nAcquiescence),
-            "Paramater `nAcquiescence` must be a non-negative integer." =
+            "Argument `nAcquiescence` must be a non-negative integer." =
               length(nAcquiescence) == 1L,
-            "Paramater `nAcquiescence` can't contain NAs." =
+            "Argument `nAcquiescence` can't contain NAs." =
               !is.na(nAcquiescence),
-            "Paramater `nAcquiescence` must be a non-negative integer." =
+            "Argument `nAcquiescence` must be a non-negative integer." =
               as.integer(nAcquiescence) == nAcquiescence,
-            "Paramater `nAcquiescence` must be a non-negative integer." =
+            "Argument `nAcquiescence` must be a non-negative integer." =
               nAcquiescence >= 0L,
-            "Parameter `reversed` must be TRUE or FALSE." =
+            "Argument `reversed` must be TRUE or FALSE." =
               is.logical(reversed),
-            "Parameter `reversed` must be TRUE or FALSE." =
+            "Argument `reversed` must be TRUE or FALSE." =
               length(reversed) == 1L,
-            "Parameter `reversed` must be TRUE or FALSE." =
+            "Argument `reversed` must be TRUE or FALSE." =
               reversed %in% c(FALSE, TRUE))
   stopifnot("There are fewer responses than the number of responses that is supposed to be either middle (`nMiddle`) or extreme (`2*nExtreme`)." =
               nMiddle + 2L*nExtreme <= length(responses),
@@ -273,3 +262,76 @@ make_scoring_matrix_aem <- function(
 
   return(scoringMatrix)
 }
+#' @title Make scoring matrix
+#' @description Makes trivial response matrix, corresponding to the most simple,
+#' the same for each trait GPCM scoring scheme. This function may be useful if
+#' one wants to use \code{\link{generate_slopes}} and
+#' \code{\link{generate_intercepts}} functions to generate items' parameters
+#' with no reference to response styles.
+#' @param responses vector of available responses (\emph{categories}) - can be
+#' a character vector or positive integer describing number of responses
+#' @param nTraits optionally number of traits affecting the item response;
+#' disregarded if \code{traitsNames} are provided
+#' @param traitsNames optionally character vector containing names of the traits
+#' @return matrix of integers
+#' @examples
+#' make_scoring_matrix_trivial(5, 2)
+#' make_scoring_matrix_trivial(5, traitsNames = c("A", "B"))
+#' @export
+make_scoring_matrix_trivial <- function(responses, nTraits = 1L,
+                                        traitsNames = paste0("F", 1L:nTraits)) {
+  responses <- assert_responses(responses)
+  if (inherits(responses, "try-error")) {
+    stop(sub("^.*: \\n +", "", responses))
+  }
+  stopifnot("Argument `nTraits` must be a non-negative integer." =
+              is.numeric(nTraits),
+            "Argument `nnTraits` must be a non-negative integer." =
+              length(nTraits) == 1L,
+            "Argument `nMiddle` can't contain NAs." =
+              !is.na(nTraits),
+            "Argument `nTraits` must be a non-negative integer." =
+              as.integer(nTraits) == nTraits,
+            "Argument `nTraits` must be a non-negative integer." =
+              nTraits >= 0L,
+            "Argument `traitsNames` must be a character vector." =
+              is.character(traitsNames),
+            "Argument `traitsNames` must be a character vector containing at least one element." =
+              length(traitsNames) > 0,
+            "Argument `traitsNames` can't contain missing values." =
+              !any(is.na(traitsNames)),
+            "Argument `traitsNames` can't contain duplicates." =
+              !any(duplicated(traitsNames)))
+  return(matrix(rep((1L:length(responses)) - 1, length(traitsNames)),
+                nrow = length(responses),
+                dimnames = list(responses, traitsNames)))
+}
+# common assertions
+assert_responses <- function(responses) {
+  e = try(stopifnot("Argument `responses` must be a vector." =
+                      is.vector(responses),
+                    "Argument `responses` can't contain duplicated values." =
+                      all(!duplicated(responses)),
+                    "Argument `responses` must have at least two values or be a positive integer." =
+                      length(responses) > 1L | is.numeric(responses),
+                    "Argument `responses` can't contain NAs." =
+                      !anyNA(responses)),
+          silent = TRUE)
+  if (inherits(e, "try-error")) {
+    return(e)
+  }
+  if (length(responses) <= 1L) {
+    e <- try(stopifnot("Argument `responses` must have at least two values or be a positive integer." =
+                         length(responses) == 1L,
+                       "Argument `responses` must have at least two values or be a positive integer." =
+                         as.integer(responses) == responses,
+                       "Argument `responses` must have at least two values or be a positive integer larger than 1." =
+                         responses > 1L))
+    if (inherits(e, "try-error")) {
+      return(e)
+    }
+    responses = 1L:responses
+  }
+  return(responses)
+}
+

@@ -13,7 +13,7 @@ values}
 \item{items}{list with test items' specification}
 
 \item{performAssertions}{logical value indicating whether function should
-perform assertions of the other parameters (\code{TRUE} by default, may be
+perform assertions of the other arguments (\code{TRUE} by default, may be
 changed to \code{FALSE} for a little performance gain)}
 }
 \value{
@@ -23,6 +23,5 @@ matrix with responses on items
 }
 \description{
 Generates simulated responses to a test given informations
-about items and parameters of joint multivariate normal distribution of
-latent traits.
+about items values of latent traits.
 }

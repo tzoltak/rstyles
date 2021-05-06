@@ -1,12 +1,11 @@
 #' @title Generate simulated data
 #' @description Generates simulated responses to a test given informations
-#' about items and parameters of joint multivariate normal distribution of
-#' latent traits.
+#' about items values of latent traits.
 #' @param theta matrix (or data frame) of already generated latent traits'
 #' values
 #' @param items list with test items' specification
 #' @param performAssertions logical value indicating whether function should
-#' perform assertions of the other parameters (\code{TRUE} by default, may be
+#' perform assertions of the other arguments (\code{TRUE} by default, may be
 #' changed to \code{FALSE} for a little performance gain)
 #' @return matrix with responses on items
 #' \code{\link{generate_item_responses_sqn}},
@@ -17,13 +16,13 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE) {
     if (is.data.frame(theta)) {
       theta <- as.matrix(theta)
     }
-    stopifnot("Parameter `theta` must be a numeric matrix." =
+    stopifnot("Argument `theta` must be a numeric matrix." =
                 is.matrix(theta),
-              "Parameter `theta` must be a numeric matrix." =
+              "Argument `theta` must be a numeric matrix." =
                 is.numeric(theta),
-              "Parameter `theta` must have at least one row." = nrow(theta) > 0,
-              "Parameter `theta` can't contain NAs." = all(!is.na(theta)),
-              "Parameter `items` must be a list of class 'itemList'" =
+              "Argument `theta` must have at least one row." = nrow(theta) > 0,
+              "Argumentr `theta` can't contain NAs." = all(!is.na(theta)),
+              "Argument `items` must be a list of class 'itemList'" =
                 is.list(items),
               "Each element of `items` must be of class 'rstylesItem'" =
                 all(sapply(items, inherits, what = "rstylesItem")))
@@ -99,7 +98,7 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE) {
 #' @param intercepts intercept parameters
 #' @param editResponse optional function returning scoring matrix that should be
 #' used instead that provided by \code{scoringMatrix}; this should be function
-#' accepting two parameters: \code{response} - generated response (by the model
+#' accepting two arguments: \code{response} - generated response (by the model
 #' described with the first column of the \code{scoringMatrix}) that is supposed
 #' to be \emph{edited} and \code{scoringMatrix} - current scoring matrix (to be
 #' replaced)
@@ -215,7 +214,7 @@ generate_item_responses_sml <- function(theta, scoringMatrix, slopes,
 #' \strong{\code{theta} and \code{weightsMatrix} have the same number and order
 #' of columns} (unlike \code{\link{generate_item_responses_sqn}} and
 #' \code{\link{generate_item_responses_sml}} that are used to match theirs
-#' parameters  \code{theta}, \code{scoringMatrix} and \code{slopes} before
+#' arguments \code{theta}, \code{scoringMatrix} and \code{slopes} before
 #' passing them to \code{generate_item_responeses_gpcm}).
 #' @param theta matrix of latent traits' values
 #' @param weightsMatrix matrix of discrimination parameters (being
