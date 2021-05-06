@@ -1,7 +1,7 @@
 Package: rstyles
 Type: Package
 Title: Generating Simulated Data Mimicking Response Styles to Survey Questions
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(person("Tomasz", "\u017b\u00F3\u0142tak",
                     email = "tomek@zozlak.org",
                     role = c("aut", "cre"),
@@ -30,7 +30,8 @@ Suggests:
     knitr,
     mnormt,
     rmarkdown,
-    mirt
+    mirt,
+    truncnorm
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

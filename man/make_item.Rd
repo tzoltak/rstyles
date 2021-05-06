@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_item.R
 \name{make_item}
 \alias{make_item}
-\title{Internals: making object representing an item}
+\title{Creating object representing an item}
 \usage{
 make_item(
   scoringMatrix,
@@ -18,12 +18,12 @@ make_item(
 of the matrix) map on \emph{scores} of latent traits (described in columns of
 the matrix)}
 
-\item{slopes}{\strong{named} numeric vector of slope parameters with names describing
-latent variables matching each slope (must contain at least all the names
-occurring in column names of the \code{scoringMatrix} but may also contain
-additional slopes matching latent traits scoring patterns on which will be
-returned by functions provided with parameters
-\code{scoringOnPreviousResponses} or \code{editResponse})}
+\item{slopes}{\strong{named} numeric vector of slope (discrimination)
+parameters with names describing latent variables matching each slope
+(must contain at least all the names occurring in column \emph{names} of the
+\code{scoringMatrix} but may also contain additional slopes matching latent
+traits scoring patterns that will be returned by functions provided with
+arguments \code{scoringOnPreviousResponses} or \code{editResponse})}
 
 \item{intercepts}{numeric vector of intercept parameters (must be shorter
 of one than number of rows in the \\code{scoringMatrix} or the same length
@@ -39,12 +39,17 @@ that will be put before first column of the \code{scoringMatrix}}
 \item{editResponse}{only if \code{mode='sequential'}: optional function
 returning scoring matrix that should replace that provided by
 \code{scoringMatrix} after \emph{response is made} at the first \emph{node};
-this should be function accepting two parameters: \code{response} - generated
+this should be function accepting two arguments: \code{response} - generated
 response (by the model described with the first column of the
 \code{scoringMatrix}) that is supposed to be \emph{edited} and
 \code{scoringMatrix} - current scoring matrix (to be replaced)}
 }
+\value{
+Object of class \emph{rstylesItem} representing an item. List of
+such objects is passed as a test specification to
+\code{\link{generate_test_responses}}.
+}
 \description{
-Function mostly performs checks whether provided parameters are
+Function mostly performs checks whether provided arguments are
 reasonable and match each other.
 }

@@ -1,35 +1,26 @@
 set.seed(26112020)
+# generating test
 nItems <- 20
 sM <- make_scoring_matrix_aem(1:6, "mae")
-slopes <- matrix(c(rlnorm(nItems, 0, 0.2),
-                   rlnorm(nItems, 0, 0.2),
-                   rlnorm(nItems, 0, 0.2),
-                   rlnorm(nItems, 0, 0.2)),
-                 ncol = ncol(sM), dimnames = list(NULL, colnames(sM)))
-intercepts <- matrix(c(rnorm(nItems, 0, 1.5),
-                       rnorm(nItems, 0, 1.5),
-                       rnorm(nItems, 0, 1.5),
-                       rnorm(nItems, 0, 1.5)),
-                     ncol = ncol(sM),
-                     dimnames = list(NULL, paste0(colnames(sM), "1")))
+slopes <- generate_slopes(nItems, sM, FUN = rlnorm, meanlog = 0, sdlog = 0.2)
+intercepts <- generate_intercepts(nItems, sM,
+                                  FUNd = rnorm, argsd = list(mean = 0, sd = 1.5))
+items <- make_test(sM, slopes, intercepts, "sequential")
 
-items <- vector(mode = "list", length = nItems)
-for (i in 1:nItems) {
-  items[[i]] <- make_item(sM, slopes[i, ], intercepts[i, ], "sequential")
-}
-# uncorrelated traits
+# generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = 3, ncol = 3,
                      dimnames = list(c("m", "a", "e"), c("m", "a", "e")))
 diag(vcovTraits) <- 1
 theta = mnormt::rmnorm(1000, varcov = vcovTraits)
 colnames(theta) <- colnames(vcovTraits)
 
+# generating responses
 resp <- generate_test_responses(theta, items)
 resp <- apply(resp, 1:2, as.numeric)
 colnames(resp) <- paste0("i", 1:ncol(resp))
 
+# scaling
 respWide <- expand_responses(resp, sM)
-
 mSqt <- suppressMessages(mirt(respWide,
                               mirt.model("m = 1-20
                          a1 = 21-40

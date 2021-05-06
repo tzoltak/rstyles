@@ -1,31 +1,31 @@
 set.seed(26112020)
+# generating test
 nItems <- 20
 sM <- make_scoring_matrix_aem(1:5, "simultaneous")
-slopes <- matrix(c(rlnorm(nItems, 0, 0.3),
-                   rep(1, nItems),
-                   rep(1, nItems),
-                   rep(1, nItems)),
-                 ncol = 4, dimnames = list(NULL, colnames(sM)))
-intercepts <- runif(nItems, -2, 2)
-intercepts <- t(sapply(intercepts,
-                       function(x) x + seq(0.9, -0.9, length.out = 4)))
-colnames(intercepts) <- paste0("d", 1:ncol(intercepts))
+slopes <- cbind(generate_slopes(nItems, sM[, 1L, drop = FALSE],
+                                FUN = rlnorm, meanlog = 0, sdlog = 0.3,
+                                nReversed = floor(nItems / 2)),
+                generate_slopes(nItems, sM[, 2:4], 1))
+intercepts <- generate_intercepts(nItems, sM,
+                                  FUNd = runif, argsd = list(min = -2, max = 2),
+                                  FUNt = seq, argst = list(from = 0.9,
+                                                           to = -0.9,
+                                                           length.out = 4))
+items <- make_test(sM, slopes, intercepts, "simultaneous")
 
-items <- vector(mode = "list", length = nItems)
-for (i in 1:nItems) {
-  items[[i]] <- make_item(sM, slopes[i, ], intercepts[i, ], "simultaneous")
-}
-# uncorrelated traits
+# generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
                      dimnames = list(colnames(sM), colnames(sM)))
 diag(vcovTraits) <- 1
 theta = mnormt::rmnorm(1000, varcov = vcovTraits)
 colnames(theta) <- colnames(vcovTraits)
 
+# generating responses
 resp <- generate_test_responses(theta, items)
 resp <- apply(resp, 1:2, as.numeric)
 colnames(resp) <- paste0("i", 1:ncol(resp))
 
+# scaling
 mSml <- suppressMessages(mirt(resp,
                               mirt.model("i = 1-20
                                           m = 1-20
@@ -36,14 +36,14 @@ mSml <- suppressMessages(mirt(resp,
                          method = "EM", TOL = 0.1, verbose = FALSE))
 estItemPars <- coef(mSml, simplify = TRUE)$items
 test_that("Item parameters of simultaneous A, E, M RS (with 5-point scale) recovers in estimation with reasonable MSEs.", {
-  expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.095)
-  expect_lt(mean((slopes[, 2] - estItemPars[, 2])^2), 0.03)
+  expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.2)
+  expect_lt(mean((slopes[, 2] - estItemPars[, 2])^2), 0.02)
   expect_lt(mean((slopes[, 3] - estItemPars[, 3])^2), 0.02)
-  expect_lt(mean((slopes[, 4] - estItemPars[, 4])^2), 0.05)
-  expect_lt(mean((intercepts[, 1] - estItemPars[, 26])^2), 0.09)
-  expect_lt(mean((intercepts[, 2] - estItemPars[, 27])^2), 0.24)
-  expect_lt(mean((intercepts[, 3] - estItemPars[, 28])^2), 0.51)
-  expect_lt(mean((intercepts[, 4] - estItemPars[, 29])^2), 0.52)
+  expect_lt(mean((slopes[, 4] - estItemPars[, 4])^2), 0.4)
+  expect_lt(mean((intercepts[, 1] - estItemPars[, 26])^2), 0.06)
+  expect_lt(mean((intercepts[, 2] - estItemPars[, 27])^2), 0.12)
+  expect_lt(mean((intercepts[, 3] - estItemPars[, 28])^2), 0.09)
+  expect_lt(mean((intercepts[, 4] - estItemPars[, 29])^2), 0.08)
 })
 
 # cat("Generating model:\n")
