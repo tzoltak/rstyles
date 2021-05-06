@@ -27,7 +27,7 @@ There are four steps one needs to follow to simulate responses to a test:
 
     -   One may use functions `generate_slopes()` and `generate_intercepts()` to generate matrices of items' parameters in a convenient way - see documentation of these functions and examples below.
 
-        -   If one wants to prepare these matrices manually, he/she should remember to name its columns properly - see documentation of `generate_intercepts()`. Moreover one should recognize that the package employs the IRT model specification in which *intercepts* are added to the sum of products of *slopes* and value of respective latent traits, not subtracted from this sum (this is the same specification that is used in the package [*mirt*](https://cran.r-project.org/web/packages/mirt/)). Consequently ***intercepts*** **describe items'/categories' *easiness*, not *difficulty***.
+        -   If one wants to prepare these matrices manually, he/she should remember to name its columns properly - see documentation of `generate_intercepts()`. Moreover one should recognize that the package employs the IRT model specification in which *intercepts* are added to the sum of products of *slopes* and value of respective latent traits, not subtracted from this sum (this is the same specification that is used in the package [*mirt*](https://CRAN.R-project.org/package=mirt)). Consequently ***intercepts*** **describe items'/categories' *easiness*, not *difficulty***.
 
     -   Having matrices of items' *slopes* and *intercepts* one may use function `make_test()` to prepare an object representing a test (i.e. collection of items) that can be further use to generate responses in the step four.
 
@@ -197,15 +197,15 @@ One may also generate results from the different *sub-test* (collections of item
 
 -   [SimDesign](https://github.com/philchalmers/SimDesign) package
 
--   [mvtnorm](https://cran.r-project.org/web/packages/mvtnorm/) package - multivariate normal and *t* distributions
+-   [mvtnorm](https://CRAN.R-project.org/package=mvtnorm) package - multivariate normal and *t* distributions
 
--   [mnormt](https://cran.r-project.org/web/packages/mnormt/) package - multivariate normal and *t* distributions and their truncated versions
+-   [mnormt](https://CRAN.R-project.org/package=mnormt) package - multivariate normal and *t* distributions and their truncated versions
 
--   [truncnorm](https://cran.r-project.org/web/packages/truncnorm/) package - truncated normal distributions
+-   [truncnorm](https://CRAN.R-project.org/package=truncnorm) package - truncated normal distributions
 
--   [TruncatedNormal](https://cran.r-project.org/web/packages/TruncatedNormal/) package - multivariate normal and *t* distributions and their truncated versions
+-   [TruncatedNormal](https://CRAN.R-project.org/package=TruncatedNormal) package - multivariate normal and *t* distributions and their truncated versions
 
--   [OrdNor](https://cran.r-project.org/web/packages/OrdNor/) package - generating data with normal and categorical variables
+-   [OrdNor](https://CRAN.R-project.org/package=OrdNor) package - generating data with normal and categorical variables
 
 # Literature
 
