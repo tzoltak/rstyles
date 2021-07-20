@@ -1,3 +1,15 @@
+# rstyles 0.4.0 (20.072021)
+
+## New features
+
+- `make_test()` assigns names to the created items by default and provides additional `names` argument if user wants to provide names himself/herself.
+- `generate_test_responses()` uses items' names (if there are any) to name columns of the returned matrix.
+- `generate_test_responses()` converts matrix it returns to numeric one (if only this is possible without loss of information); it also provides additional argument `tryConvertToNumeric` that allows to bring back its former behavior (i.e. returning a character matrix).
+
+## Documentation
+
+- Some improvements in documentation.
+
 # rstyles 0.3.0 (5.05.2021)
 
 ## New features

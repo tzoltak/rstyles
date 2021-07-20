@@ -7,11 +7,16 @@
 #' @param performAssertions logical value indicating whether function should
 #' perform assertions of the other arguments (\code{TRUE} by default, may be
 #' changed to \code{FALSE} for a little performance gain)
+#' @param tryConvertToNumeric logical value indicating whether function should
+#' try to convert generated responses to numeric values (technically responses
+#' are get from rownames of the items' scoring matrices that are character
+#' vectors)
 #' @return matrix with responses on items
 #' \code{\link{generate_item_responses_sqn}},
 #' \code{\link{generate_item_responses_sml}}
 #' @export
-generate_test_responses <- function(theta, items, performAssertions = TRUE) {
+generate_test_responses <- function(theta, items, performAssertions = TRUE,
+                                    tryConvertToNumeric = TRUE) {
   if (performAssertions) {
     if (is.data.frame(theta)) {
       theta <- as.matrix(theta)
@@ -25,7 +30,13 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE) {
               "Argument `items` must be a list of class 'itemList'" =
                 is.list(items),
               "Each element of `items` must be of class 'rstylesItem'" =
-                all(sapply(items, inherits, what = "rstylesItem")))
+                all(sapply(items, inherits, what = "rstylesItem")),
+              "Argument `tryCovertToNumeric` must be TRUE or FALSE." =
+                is.logical(tryConvertToNumeric),
+              "Argument `tryCovertToNumeric` must be TRUE or FALSE." =
+                length(tryConvertToNumeric) == 1,
+              "Argument `tryCovertToNumeric` must be TRUE or FALSE." =
+                tryConvertToNumeric %in% c(FALSE, TRUE))
     traitNames <- sapply(items, function(x) {return(names(x$slopes))})
     traitNames <- unique(as.vector(traitNames))
     traitNames <- sub("[[:digit:]]+$", "", traitNames)
@@ -36,7 +47,8 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE) {
     }
   }
 
-  responses = matrix(NA_integer_, nrow = nrow(theta), ncol = length(items))
+  responses = matrix(NA_integer_, nrow = nrow(theta), ncol = length(items),
+                     dimnames = list(NULL, names(items)))
   for (i in 1L:ncol(responses)) {
     scoringMatrix <- items[[i]]$scoringMatrix
     # dispatch for speed
@@ -78,6 +90,14 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE) {
                                                       items[[i]]$slopes,
                                                       items[[i]]$intercepts)
       }
+    }
+  }
+  if (tryConvertToNumeric) {
+    uniqueResponses <- setdiff(unique(responses), NA)
+    if (!any(is.na(suppressWarnings(as.numeric(uniqueResponses))))) {
+      responses <- matrix(as.numeric(responses), nrow = nrow(responses),
+                          dimnames = list(rownames(responses),
+                                          colnames(responses)))
     }
   }
   return(responses)

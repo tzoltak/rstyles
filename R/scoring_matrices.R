@@ -20,8 +20,12 @@
 #' @param nAcquiescence number of \emph{acquiescence} \emph{categories}
 #' @param reversed logical value - is item a reversed one? (see details)
 #' @param aType determines a way in which scoring pattern for acquiescence is
-#' generated when it appears in different branches of an IRTree
-#' @param iType determines a way in which scoring pattern for additional
+#' generated when it appears in different branches of the IRTree (whether to
+#' create separate columns allowing for different discrimination of the
+#' acquiescence in different nodes of the tree or to create only a single column
+#' holding discrimination in different nodes of the tree constant)
+#' @param iType determines a way in which scoring pattern for additional (see
+#' the description of the `aType` parameter above)
 #' \emph{intensity} trait will be generated (see details)
 #' @details \strong{\code{sequence} other than "simultaneous":}
 #'

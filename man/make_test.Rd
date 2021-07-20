@@ -10,7 +10,8 @@ make_test(
   intercepts,
   mode = c("sequential", "simultaneous"),
   scoringOnPreviousResponses = NULL,
-  editResponse = NULL
+  editResponse = NULL,
+  names = paste0("i", 1:nrow(slopes))
 )
 }
 \arguments{
@@ -38,6 +39,10 @@ this should be function accepting two arguments: \code{response} - generated
 response (by the model described with the first column of the
 \code{scoringMatrix}) that is supposed to be \emph{edited} and
 \code{scoringMatrix} - current scoring matrix (to be replaced)}
+
+\item{names}{optional character vector providing names of the items (by
+default names will be created as concatenation of the letter "i" - like
+"item" - and consecutive integers)}
 }
 \value{
 List of objects of the \emph{rstylesItem} class.

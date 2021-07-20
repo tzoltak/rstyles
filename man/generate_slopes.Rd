@@ -104,7 +104,7 @@ generate_slopes(10, sM, FUN = rnorm,
 # trait 'e' (i.e. the third column in the scoring matrix): mean 1.5, sd 1
 # and bounds equals to 0.5 (lower) and 2.5 (upper) for all the traits
 sM <- make_scoring_matrix_aem(5, sequence = "mae")
-library(truncnorm)
+require(truncnorm)
 generate_slopes(10, sM, FUN = rtruncnorm,
                 mean = c(1, 1.2, 1.5),
                 sd = c(0.5, 0.7, 1),

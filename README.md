@@ -4,7 +4,15 @@
 
 Package *rstyles* provides functions that enables performing simulations involving IRT/CCFA models that assume responses to be affected by so-called *response styles*. It includes functions to generate (randomly or deterministically) items' parameters and to generate responses.
 
-# How to use package
+# Installing the package
+
+The latest version of the package can be installed from GitHub using package `devtools`:
+
+```{r}
+devtools::install.github("tzoltak/rstyles")
+```
+
+# How to use the package
 
 ## General description
 
@@ -14,7 +22,7 @@ There are four steps one needs to follow to simulate responses to a test:
 
     -   Within package *rstyles* model of answering an item is described on the most general level using so-called *scoring matrix*, i.e. a matrix that describes how different latent traits contribute to propensity of choosing a given category (answer). Names of columns of the *scoring matrix* corresponds to the names of latent traits in the model and names of rows to available response categories for each item. The same form of representation is used to describe two quite different types of models:
 
-        -   noncompensatory IRTree models (Böckenholt, 2012, 2017) in which respondingprocess is assumed to be a sequence of (typically binary, but this is not the only possible approach) decisions and in each of these decisions only one latent trait is involved; this type of models can be estimated by means of defining so-called *pseudo-items* - each of them describing such a single decision made by respondent (compare function `expand_responses()`); in the package *rstyles* this approach is identified as a *sequential mode* of responding;
+        -   noncompensatory IRTree models (Böckenholt, 2012, 2017) in which responding process is assumed to be a sequence of (typically binary, but this is not the only possible approach) decisions and in each of these decisions only one latent trait is involved; this type of models can be estimated by means of defining so-called *pseudo-items* - each of them describing such a single decision made by respondent (compare function `expand_responses()`); in the package *rstyles* this approach is identified as a *sequential mode* of responding;
         -   partially-compensatory models (Falk & Cai, 2016; Henninger & Meiser, 2020a, 2020b; Plieninger, 2017) in which latent traits are supposed to describe the specific way of perceiving the response scale by the respondent and may be thought as affecting the response process *simultaneously* (contrary to the IRTree approach), typically along with an additional latent trait that describes *what the test (scale) is supposed to measure* (i.e. not a response style); in the package *rstyles* this approach is identified as a *simultaneous mode* of responding.
 
     -   Although *scoring matrix* used to describe this both approaches within the package *rstyles* looks quite the same, it is used in a different way internally in the response generating step - that's why one needs to declare the *mode* of responding while defining items in the second step of the procedure.
@@ -72,7 +80,7 @@ intercepts <- generate_intercepts(nItems, sM,
 items <- make_test(sM, slopes, intercepts, "sequential")
 
 # generating "subjects" - uncorrelated traits
-vcovTraits <- matrix(0, nrow = ncol(sM), ngcol = ncol(sM),
+vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
                      dimnames = list(colnames(sM), colnames(sM)))
 diag(vcovTraits) <- 1
 theta = rmnorm(1000, varcov = vcovTraits)
@@ -80,8 +88,6 @@ colnames(theta) <- colnames(vcovTraits)
 
 # generating responses
 resp <- generate_test_responses(theta, items)
-resp <- apply(resp, 1:2, as.numeric)
-colnames(resp) <- paste0("i", 1:ncol(resp))
 
 # scaling
 respWide <- expand_responses(resp, sM)

@@ -40,9 +40,13 @@ the order of decisions made by a \emph{respondent}:
 \item{reversed}{logical value - is item a reversed one? (see details)}
 
 \item{aType}{determines a way in which scoring pattern for acquiescence is
-generated when it appears in different branches of an IRTree}
+generated when it appears in different branches of the IRTree (whether to
+create separate columns allowing for different discrimination of the
+acquiescence in different nodes of the tree or to create only a single column
+holding discrimination in different nodes of the tree constant)}
 
-\item{iType}{determines a way in which scoring pattern for additional
+\item{iType}{determines a way in which scoring pattern for additional (see
+the description of the `aType` parameter above)
 \emph{intensity} trait will be generated (see details)}
 }
 \value{

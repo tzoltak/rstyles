@@ -4,7 +4,12 @@
 \alias{generate_test_responses}
 \title{Generate simulated data}
 \usage{
-generate_test_responses(theta, items, performAssertions = TRUE)
+generate_test_responses(
+  theta,
+  items,
+  performAssertions = TRUE,
+  tryConvertToNumeric = TRUE
+)
 }
 \arguments{
 \item{theta}{matrix (or data frame) of already generated latent traits'
@@ -15,6 +20,11 @@ values}
 \item{performAssertions}{logical value indicating whether function should
 perform assertions of the other arguments (\code{TRUE} by default, may be
 changed to \code{FALSE} for a little performance gain)}
+
+\item{tryConvertToNumeric}{logical value indicating whether function should
+try to convert generated responses to numeric values (technically responses
+are get from rownames of the items' scoring matrices that are character
+vectors)}
 }
 \value{
 matrix with responses on items

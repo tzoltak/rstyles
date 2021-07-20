@@ -21,6 +21,9 @@
 #' response (by the model described with the first column of the
 #' \code{scoringMatrix}) that is supposed to be \emph{edited} and
 #' \code{scoringMatrix} - current scoring matrix (to be replaced)
+#' @param names optional character vector providing names of the items (by
+#' default names will be created as concatenation of the letter "i" - like
+#' "item" - and consecutive integers)
 #' @details Function is actually a simple wrapper around \code{\link{make_item}}
 #' - see documentation of this function for further details.
 #'
@@ -94,7 +97,8 @@
 #' @export
 make_test <- function(scoringMatrix, slopes, intercepts,
                       mode = c('sequential', 'simultaneous'),
-                      scoringOnPreviousResponses = NULL, editResponse = NULL) {
+                      scoringOnPreviousResponses = NULL, editResponse = NULL,
+                      names = paste0("i", 1:nrow(slopes))) {
   # make_item() performs detailed assertions, so here there are only the basic ones
   mode <- match.arg(mode)
   stopifnot("Argument `slopes` must be a numeric matrix." = is.matrix(slopes),
@@ -107,8 +111,13 @@ make_test <- function(scoringMatrix, slopes, intercepts,
               nrow(slopes) == nrow(intercepts),
             is.function(scoringOnPreviousResponses) |
               is.null(scoringOnPreviousResponses),
-            is.function(editResponse) | is.null(editResponse))
+            is.function(editResponse) | is.null(editResponse),
+            "Argument `names` must be a character vector." =
+              is.character(names),
+            "Length of the `names` must be equal to number of rows of `slopes` and `intercepts`." =
+              length(names) == nrow(slopes))
   items <- vector(mode = "list", length = nrow(slopes))
+  names(items) <- names
   for (i in 1L:length(items)) {
     items[[i]] <- make_item(scoringMatrix = scoringMatrix,
                             slopes = slopes[i, ],
