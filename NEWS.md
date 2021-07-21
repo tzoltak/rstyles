@@ -1,13 +1,15 @@
-# rstyles 0.4.0 (20.072021)
+# rstyles 0.4.0 (21.072021)
 
 ## New features
 
 - `make_test()` assigns names to the created items by default and provides additional `names` argument if user wants to provide names himself/herself.
 - `generate_test_responses()` uses items' names (if there are any) to name columns of the returned matrix.
 - `generate_test_responses()` converts matrix it returns to numeric one (if only this is possible without loss of information); it also provides additional argument `tryConvertToNumeric` that allows to bring back its former behavior (i.e. returning a character matrix).
+- `generate_intercepts_sml()`, and consequently `generate_intercepts()` when called with `FUNt` argument, returns intercepts matrix with additional first columns of zeros to make it compatible with the format that uses function `simdata()` from *mirt* package (`generate_test_responses()` was, and still is, able to deal with providing it intercepts either with or without such additional zeros).
 
 ## Documentation
 
+- Additional section in README.md describing the way function `simdata()` from package *mirt* may be used to speed up generation of GPCM responses.
 - Some improvements in documentation.
 
 # rstyles 0.3.0 (5.05.2021)

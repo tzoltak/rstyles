@@ -51,6 +51,7 @@ There are four steps one needs to follow to simulate responses to a test:
 4.  Generate responses using information from the three previous steps.
 
     -   Now one may generate responses using function `generate_test_responses()`, provided with a matrix of values of the latent traits and a list of objects describing items included in the test.
+    -   To generate responses according to GPCM you may also use function `simdata()` from package *mirt* (see below).
 
 ## Examples
 
@@ -59,7 +60,7 @@ There are four steps one needs to follow to simulate responses to a test:
 -   Below perhaps the most widely known IRTree model is used: Middle-Acquiescence-Extreme (MAE) model for a 5-point Likert scale items (Böckenholt, 2012, 2017).
 -   Test consist of 20 items.
 -   Items' *slopes* are generated from a log-normal distribution with expected value and standard deviation on the log scale being 0 and 0.2 respectively.
--   Items' *intercepts* (*thresholds*) are generated from a normal distribution wit expected value of 0 and standard deviation of 1.5.
+-   Items' *intercepts* (*thresholds*) are generated from a normal distribution with expected value of 0 and standard deviation of 1.5.
 -   Latent traits are assumed to be standard normal and independent of each other (this is not a very plausible assumption).
 -   There are 1000 *respondents* (responses that are generated).
 -   Function `mirt()` from package *mirt* is used to estimate 2PL IRT model on the generated data, using so-called *pseudo-items* approach (function `expand_responses()` enables reshaping data to the *pseudo-items* form).
@@ -98,7 +99,7 @@ mSqt <- mirt(respWide,
              '2PL')
 ```
 
-### Partially-compensatory GPCM including *middle*, *extreme* and *acquiescence* response styles
+### Partially-compensatory random-thresholds GPCM including *middle*, *extreme* and *acquiescence* response styles
 
 -   Below the model is defined in which apart of the *trait the test is supposed to measure*, named "i", there are three additional latent traits describing response styles that affect responses *simultaneously*. This traits may be interpreted as describing *middle* ("m"), *extreme* ("e") and *acquiescence* ("a") response styles.
 -   Test consist of 20 items, half of which is *reversed* (i.e. *negatively* associated with the trait called "i").
@@ -140,8 +141,6 @@ colnames(theta) <- colnames(vcovTraits)
 
 # generating responses
 resp <- generate_test_responses(theta, items)
-resp <- apply(resp, 1:2, as.numeric)
-colnames(resp) <- paste0("i", 1:ncol(resp))
 
 # scaling
 mSml <- suppressMessages(mirt(resp,
@@ -164,7 +163,7 @@ Also, it is possible to specify distinct *scoring matrices* for the *reversed* a
 
 ### Log-normal distribution parameters
 
-Log-normal distribution is parameterized on the log scale (i.e. by parameters of the *underlying* normal distribution) but while generating parameters one is always interested in the parameters on the *exponential* scale, i.e. the scale of the sampled values. To deal with this problem package *rstyles* provides a set o functions:
+Log-normal distribution is parameterized on the log scale (i.e. by parameters of the *underlying* normal distribution) but while generating parameters one is always interested in the parameters on the *exponential* scale, i.e. the scale of the sampled values. To deal with this problem package *rstyles* provides a set of functions:
 
 - `lnorm_mean()` and `lnorm_sd()` enables to compute respectively expected value and standard deviation of the log-normal distribution with a given *meanlog* and *sdlog* parameters (compare `?rlnorm`);
 - `find_pars_lnorm()` returns values of the *meanlog* and *sdlog* parameters one should use to get expected value and standard deviation of the log-normal distribution specified as arguments to this function.
@@ -174,6 +173,19 @@ Log-normal distribution is parameterized on the log scale (i.e. by parameters of
 If one wants to generate responses from a mixture of different *populations* (groups of *respondents*) that differ with respect to the distribution of the latent traits or with respect to the model describing how they answer items, he/she should simply generate independently responses in each (sub)group and then bind them (using for example with `rbind()`, but please note that it will be typically beneficial to add a variable describing what *population* given result belongs to to the results before performing the binding).
 
 One may also generate results from the different *sub-test* (collections of items) independently and then bind them using for example `cbind()` but in such a case the same matrix of the generated values of the latent traits should (typically) be used while generating responses to each *sub-test*.
+
+### Speeding up generation of GPCM responses using `simdat()` function from the *mirt* package
+
+# Function `simdata()` from the *mirt* package will be much faster than `generate_test_responses()` while generating GPCM responses, especially with large number of items or observations (or both). Luckily (since version 0.4.0 of *rstyles*), matrices of parameters generated by `generate_slopes()` and `generate_intercepts()` are fully-compatible with the `simdata()` function.
+
+For example in the listing included in *Partially-compensatory GPCM including "middle", "extreme" and "acquiescence"" response styles* section above you can substitute call to `generate_test_responses()` by the following call to `simdata()`:
+
+```{r}
+respSimdata <- simdata(slopes, intercepts, N = nrow(theta), itemtype = "gpcm",
+                       Theta = theta, gpcm_mats = rep(list(sM), ncol(slopes)))
+```
+
+However, remember that `simdata()` always returns responses as numbers starting from 0 (the first category), irrespective the scoring matrix you provide it.
 
 # To do
 

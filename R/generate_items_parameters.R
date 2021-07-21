@@ -308,7 +308,7 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #'                                              length.out = 4))
 #' @export
 generate_intercepts <- function(nItems, scoringMatrix, FUNd, argsd = NULL,
-                           FUNt = NULL, argst = NULL) {
+                                FUNt = NULL, argst = NULL) {
   stopifnot("Argument `nItems` must be a positive integer." =
               is.numeric(nItems),
             "Argument `nItems` must be a positive integer." =
@@ -425,7 +425,9 @@ generate_intercepts_sml <- function(nItems, scoringMatrix, FUNd, argsd,
       sort(intercepts[[i]], decreasing = TRUE) - mean(intercepts[[i]])
     intercepts[[i]] <- intercepts[[i]] + difficulties[i]
   }
-  return(t(matrix(unlist(intercepts), ncol = nItems,
-                  dimnames =
-                    list(paste0("d", 1L:(nrow(scoringMatrix) - 1L)), NULL))))
+  intercepts <- t(matrix(unlist(intercepts), ncol = nItems,
+                         dimnames =
+                           list(paste0("d", 1L:(nrow(scoringMatrix) - 1L)),
+                                NULL)))
+  return(cbind(d0 = rep(0, nrow(intercepts)), intercepts))
 }
