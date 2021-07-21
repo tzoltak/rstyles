@@ -15,4 +15,3 @@ test_that("", {
                                             paste0("e_", colnames(responses)))))
   expect_identical(respExp, pattern)
 })
-rm(list = ls())

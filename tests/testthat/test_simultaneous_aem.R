@@ -35,6 +35,7 @@ mSml <- suppressMessages(mirt(resp,
                          gpcm_mats = lapply(1:ncol(resp), function(x) sM),
                          method = "EM", TOL = 0.1, verbose = FALSE))
 estItemPars <- coef(mSml, simplify = TRUE)$items
+intercepts <- intercepts[, -1]
 test_that("Item parameters of simultaneous A, E, M RS (with 5-point scale) recovers in estimation with reasonable MSEs.", {
   expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.2)
   expect_lt(mean((slopes[, 2] - estItemPars[, 2])^2), 0.02)
@@ -62,5 +63,3 @@ test_that("Item parameters of simultaneous A, E, M RS (with 5-point scale) recov
 #         d2 = mean((intercepts[, 2] - estItemPars[, 27])^2),
 #         d3 = mean((intercepts[, 3] - estItemPars[, 28])^2),
 #         d4 = mean((intercepts[, 4] - estItemPars[, 29])^2)), 3)
-
-rm(list = ls())

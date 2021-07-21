@@ -8,6 +8,10 @@
 #' @param sdlog standard deviation of the distribution on the log scale
 #' @param m mean (expected value) of the distribution on the exponential scale
 #' @param sd standard deviation of the distribution on the exponential scale
+#' @return \code{lnorm_mean()} and \code{lnorm_sd()} return numeric vectors;
+#' \code{find_pars_lnorm()} returns named numeric vector with elements named
+#' \emph{meanlog} describing means and elements named \emph{sdlog} describing
+#' standard deviations.
 #' @examples
 #' # actual expected value of the log-normal distribution with the log scale
 #' # parameters of 3 and 1.5 respectively

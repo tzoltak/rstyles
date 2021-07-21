@@ -21,6 +21,12 @@ find_pars_lnorm(m, sd)
 
 \item{sd}{standard deviation of the distribution on the exponential scale}
 }
+\value{
+\code{lnorm_mean()} and \code{lnorm_sd()} return numeric vectors;
+\code{find_pars_lnorm()} returns named numeric vector with elements named
+\emph{meanlog} describing means and elements named \emph{sdlog} describing
+standard deviations.
+}
 \description{
 Functions return parameters of a log-normal distribution on the
 exponentiated scale (\code{lnorm_mean}, \code{lnorm_sd}) or values of

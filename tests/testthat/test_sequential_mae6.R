@@ -63,5 +63,3 @@ test_that("Item parameters of sequential M, A, E RS (with 6-point scale) recover
 #         da1 = mean((intercepts[, 2] - estItemPars[, 6])^2),
 #         da2 = mean((intercepts[, 3] - estItemPars[, 7])^2),
 #         de = mean((intercepts[, 4] - estItemPars[, 8])^2)), 3)
-
-rm(list = ls())
