@@ -168,4 +168,3 @@ test_that("'Previous answer' pattern can be generated with sequential A, M, E RS
 })
 ################################################################################
 # end
-rm(list = ls())
