@@ -127,5 +127,6 @@ make_test <- function(scoringMatrix, slopes, intercepts,
                               scoringOnPreviousResponses,
                             editResponse = editResponse)
   }
+  class(items) <- c("rstylesTest", class(items))
   return(items)
 }

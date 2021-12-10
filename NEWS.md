@@ -1,4 +1,24 @@
-# rstyles 0.4.0 (21.072021)
+# rstyles 0.5.0 (??.12.2021)
+
+## New features
+
+- New function `generate_item_expected_scores()` that allows to generate (by numerical integration) expected probabilities of responses (response categories) given an item object or test object and covariance matrix of latent traits.
+  - Dependency from the package *mvtnorm* was added to be able to compute weights for quadrature points.
+
+## Bug fixes
+
+- `expand_responses()` do not take into account missing values in the data while performing assertion that all values in the data are members of the set of values defined by rownames of the `scoringMatrix`.
+- `generate_intercepts()` correctly transforms parameters generated in a parameterisation involving item difficulty and thresholds relative to his difficulty into parameterisation of intercepts in case of *simultaneous* items (i.e. it cumulatively sums up thresholds and subtracts difficulty instead of adding difficulty to thresholds).
+
+## Other changes
+
+- `make_item()` allows to get non-zero first element of the `intercepts` argument if length of `intercepts` equals to the number of rows of the `scoringMatrix` (previously it returned an error), but still warns that this is atypical specification.
+
+## Internals
+
+- Test where updated to work correctly after the changes in `generate_intercepts()`.
+
+# rstyles 0.4.0 (21.07.2021)
 
 ## New features
 

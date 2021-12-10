@@ -49,8 +49,6 @@ itemsSSml <- make_test(sMSml, slopesSml, interceptsSml, "simultaneous",
                          score_on_last_answer_straight)
 set.seed(26112020)
 respSSml <- generate_test_responses(thetaSml, itemsSSml)
-respSSml <- apply(respSSml, 1:2, as.numeric)
-colnames(respSSml) <- paste0("i", 1:ncol(respSSml))
 
 test_that("Straightlining can be generated with simultaneous A, M, E RS", {
   expect_true(all(apply(respSSml, 1,
@@ -63,8 +61,6 @@ itemsSSqt <- make_test(sMSqt, slopesSqt, interceptsSqt,  "sequential",
                          score_on_last_answer_straight)
 set.seed(26112020)
 respSSqt <- generate_test_responses(thetaSqt, itemsSSqt)
-respSSqt <- apply(respSSqt, 1:2, as.numeric)
-colnames(respSSqt) <- paste0("i", 1:ncol(respSSqt))
 
 test_that("Straightlining can be generated with sequential A, M, E RS", {
   expect_true(all(apply(respSSqt, 1,
@@ -77,8 +73,6 @@ itemsBSml <- make_test(sMSml, slopesSml, interceptsSml, "simultaneous",
                          score_on_previous_answers_bounce)
 set.seed(26112020)
 respBSml <- generate_test_responses(thetaSml, itemsBSml)
-respBSml <- apply(respBSml, 1:2, as.numeric)
-colnames(respBSml) <- paste0("i", 1:ncol(respBSml))
 
 test_that("'Bouncing' pattern can be generated with simultaneous A, M, E RS", {
   expect_true(all(apply(respBSml, 1, function(x) {
@@ -93,8 +87,6 @@ itemsBSqt <- make_test(sMSqt, slopesSqt, interceptsSqt, "sequential",
                          score_on_previous_answers_bounce)
 set.seed(26112020)
 respBSqt <- generate_test_responses(thetaSqt, itemsBSqt)
-respBSqt <- apply(respBSqt, 1:2, as.numeric)
-colnames(respBSqt) <- paste0("i", 1:ncol(respBSqt))
 
 test_that("'Bouncing' pattern can be generated with sequential A, M, E RS", {
   expect_true(all(apply(respBSqt, 1, function(x) {
@@ -109,8 +101,6 @@ itemsNSml <- make_test(sMSml, slopesSml, interceptsSml, "simultaneous",
                          score_on_last_answer_next)
 set.seed(26112020)
 respNSml <- generate_test_responses(thetaSml, itemsNSml)
-respNSml <- apply(respNSml, 1:2, as.numeric)
-colnames(respNSml) <- paste0("i", 1:ncol(respNSml))
 
 test_that("'Next answer' pattern can be generated with simultaneous A, M, E RS", {
   expect_true(all(apply(respNSml, 1, function(x) {
@@ -125,8 +115,6 @@ itemsNSqt <- make_test(sMSqt, slopesSqt, interceptsSqt, "sequential",
                          score_on_last_answer_next)
 set.seed(26112020)
 respNSqt <- generate_test_responses(thetaSqt, itemsNSqt)
-respNSqt <- apply(respNSqt, 1:2, as.numeric)
-colnames(respNSqt) <- paste0("i", 1:ncol(respNSqt))
 
 test_that("'Next answer' pattern can be generated with sequential A, M, E RS", {
   expect_true(all(apply(respNSqt, 1, function(x) {
@@ -141,8 +129,6 @@ itemsPSml <- make_test(sMSml, slopesSml, interceptsSml, "simultaneous",
                          score_on_last_answer_previous)
 set.seed(26112020)
 respPSml <- generate_test_responses(thetaSml, itemsPSml)
-respPSml <- apply(respPSml, 1:2, as.numeric)
-colnames(respPSml) <- paste0("i", 1:ncol(respPSml))
 
 test_that("'Previous answer' pattern can be generated with simultaneous A, M, E RS", {
   expect_true(all(apply(respPSml, 1, function(x) {
@@ -157,8 +143,6 @@ itemsPSqt <- make_test(sMSqt, slopesSqt, interceptsSqt, "sequential",
                          score_on_last_answer_previous)
 set.seed(26112020)
 respPSqt <- generate_test_responses(thetaSqt, itemsPSqt)
-respPSqt <- apply(respPSqt, 1:2, as.numeric)
-colnames(respPSqt) <- paste0("i", 1:ncol(respPSqt))
 
 test_that("'Previous answer' pattern can be generated with sequential A, M, E RS", {
   expect_true(all(apply(respPSqt, 1, function(x) {

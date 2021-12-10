@@ -16,8 +16,6 @@ colnames(theta) <- colnames(vcovTraits)
 
 # generating responses
 resp <- generate_test_responses(theta, items)
-resp <- apply(resp, 1:2, as.numeric)
-colnames(resp) <- paste0("i", 1:ncol(resp))
 
 # scaling
 respWide <- expand_responses(resp, sM)

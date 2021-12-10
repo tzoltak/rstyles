@@ -1,7 +1,7 @@
 Package: rstyles
 Type: Package
 Title: Generating Simulated Data Mimicking Response Styles to Survey Questions
-Version: 0.4.0
+Version: 0.5.0
 Authors@R: c(person("Tomasz", "Zoltak",
                     email = "tomek@zozlak.org",
                     role = c("aut", "cre"),
@@ -29,15 +29,15 @@ Description: Package allows to generate simulated datasets using algorithms
     careless/inattentive responding (CR, IR).
 License: MIT + file LICENSE
 Depends: R (>= 4.0.0)
+Imports:
+    mvtnorm
 Suggests:
     testthat,
     covr,
-    knitr,
     mnormt,
-    rmarkdown,
     mirt,
     truncnorm
 Encoding: UTF-8
 Language: en-US
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Config/testthat/edition: 3

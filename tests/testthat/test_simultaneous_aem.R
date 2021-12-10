@@ -1,4 +1,4 @@
-set.seed(26112020)
+set.seed(10122020)
 # generating test
 nItems <- 20
 sM <- make_scoring_matrix_aem(1:5, "simultaneous")
@@ -22,8 +22,6 @@ colnames(theta) <- colnames(vcovTraits)
 
 # generating responses
 resp <- generate_test_responses(theta, items)
-resp <- apply(resp, 1:2, as.numeric)
-colnames(resp) <- paste0("i", 1:ncol(resp))
 
 # scaling
 mSml <- suppressMessages(mirt(resp,
@@ -37,14 +35,14 @@ mSml <- suppressMessages(mirt(resp,
 estItemPars <- coef(mSml, simplify = TRUE)$items
 intercepts <- intercepts[, -1]
 test_that("Item parameters of simultaneous A, E, M RS (with 5-point scale) recovers in estimation with reasonable MSEs.", {
-  expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.2)
-  expect_lt(mean((slopes[, 2] - estItemPars[, 2])^2), 0.02)
-  expect_lt(mean((slopes[, 3] - estItemPars[, 3])^2), 0.02)
-  expect_lt(mean((slopes[, 4] - estItemPars[, 4])^2), 0.4)
+  expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.17)
+  expect_lt(mean((slopes[, 2] - estItemPars[, 2])^2), 0.023)
+  expect_lt(mean((slopes[, 3] - estItemPars[, 3])^2), 0.016)
+  expect_lt(mean((slopes[, 4] - estItemPars[, 4])^2), 0.08)
   expect_lt(mean((intercepts[, 1] - estItemPars[, 26])^2), 0.06)
-  expect_lt(mean((intercepts[, 2] - estItemPars[, 27])^2), 0.12)
-  expect_lt(mean((intercepts[, 3] - estItemPars[, 28])^2), 0.09)
-  expect_lt(mean((intercepts[, 4] - estItemPars[, 29])^2), 0.08)
+  expect_lt(mean((intercepts[, 2] - estItemPars[, 27])^2), 0.11)
+  expect_lt(mean((intercepts[, 3] - estItemPars[, 28])^2), 0.13)
+  expect_lt(mean((intercepts[, 4] - estItemPars[, 29])^2), 0.13)
 })
 
 # cat("Generating model:\n")

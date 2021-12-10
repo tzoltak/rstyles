@@ -23,7 +23,7 @@ expand_responses <- function(responses, scoringMatrix) {
             !duplicated(rownames(scoringMatrix)),
             !is.null(colnames(scoringMatrix)),
             !duplicated(colnames(scoringMatrix)),
-            all(unique(unlist(sapply(responses, unique))) %in%
+            all(setdiff(unique(unlist(sapply(responses, unique))), NA) %in%
                   rownames(scoringMatrix)))
 
   respWide <- matrix(NA, nrow = nrow(responses),

@@ -38,7 +38,10 @@ assumed to be a \emph{sequential} one;}
 }
 \value{
 Matrix of \code{nItems} rows and number of columns equal to the
-number of intercepts.
+number of intercepts. \strong{Be aware that these are \emph{intercepts} and
+not \emph{thresholds} what are returned} (and intercept for a category
+\emph{g} is a sum of \emph{thresholds} from the first category up to the
+category \emph{g} minus minus item difficulty).
 }
 \description{
 Function generates a matrix of items' intercept
@@ -64,10 +67,6 @@ of responding process. In such a case:
         \emph{pseudo-items} across all the items;}
   \item{arguments \code{FUNt} and \code{argst} are not used.}
 }
-
-Be aware that in this case values in rows of the returned matrix need not be
-ordered (as they describe different \emph{pseudo-items}).
-
 \strong{Assuming \emph{simultaneous} response process:}
 
 Assuming \emph{simultaneous} response process test item must be characterized
@@ -99,8 +98,9 @@ sum up to 0. Consequently in such a case:
         calls of the \code{FUNt} generating thresholds for consecutive items;}
 }
 
-Returned \emph{intercepts} are sums of the general items' \emph{difficulty}
-and values of the relative thresholds generated for these items.
+Returned \emph{intercepts} are computed by summing general item
+\emph{difficulty} and values of the relative thresholds generated for
+a given item and then computing cumulative sum of this vector.
 }
 \examples{
 # 5 items with 5-point response scale assuming "sequential" item response
@@ -124,7 +124,6 @@ generate_intercepts(10, sM, runif,
                     list(min = c(-3, -1, 1),
                          max = c(-1, 1, 3)))
 
-sM <- make_scoring_matrix_aem(6, sequence = "simultaneous")
 # 10 items with 6-point response scale assuming "simultaneous" item response
 # process with items difficulties sampled from a normal distribution with
 # the mean of 0 and the standard deviation of 1.5 and thresholds relative

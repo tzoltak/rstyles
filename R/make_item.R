@@ -81,9 +81,10 @@ make_item <- function(scoringMatrix, slopes, intercepts,
     intercepts <- c(d0 = 0, intercepts)
   } else {
     stopifnot("Argument `intercepts` must have the same length or be shorter by one than a number of rows of `scoringMatrix`." =
-                length(intercepts) %in% (nrow(scoringMatrix) - c(0L, 1L)),
-              "If length of `intercepts` is the same as number of rows of `scoringMatrix`, the first element of `intercepts` must be 0." =
-                length(intercepts) == (nrow(scoringMatrix) - 1L) | intercepts[1L] == 0)
+                length(intercepts) %in% (nrow(scoringMatrix) - c(0L, 1L)))
+    if (length(intercepts) == nrow(scoringMatrix) & intercepts[1L] != 0) {
+      warning("It is atypical to provide the same number of `intercepts` as the number of rows of `scoringMatrix` and not setting the first intercept to 0.")
+    }
     if (length(intercepts) < nrow(scoringMatrix)) {
       intercepts <- c(d0 = 0, intercepts)
     }
