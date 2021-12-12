@@ -13,21 +13,23 @@
 #'                       slopes = c(i = 1, m = 2, e = 3),
 #'                       intercepts = cumsum(c(0, seq(-0.5, 0.5, length.out = 4))),
 #'                       mode = "simultaneous")
-#' itemIRTree <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "mae"),
-#'                         slopes = c(m = 1, a = 1, e = 1),
-#'                         intercepts = c(m1 = 0, a1 = 0, e1 = 0),
-#'                         mode = "sequential")
 #' vcov <- matrix(c( 1,    0.5, -0.5,
 #'                   0.5,  1,   -0.25,
 #'                  -0.5, -0.25, 1),
 #'                nrow = 3, dimnames = list(c("i", "m", "e"), c("i", "m", "e")))
-#' vcovIRTree <- vcov
-#' colnames(vcovIRTree) <- rownames(vcovIRTree) <- c("a", "m", "e")
 #' compute_item_expected_scores(itemGPCM) # orthogonal, standard-normal latent traits
 #' compute_item_expected_scores(itemGPCM, vcov)
+#'
+#' itemIRTree <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "mae"),
+#'                         slopes = c(m = 1, a = 1, e = 1),
+#'                         intercepts = c(m1 = 0, a1 = 0, e1 = 0),
+#'                         mode = "sequential")
+#' vcovIRTree <- vcov
+#' colnames(vcovIRTree) <- rownames(vcovIRTree) <- c("a", "m", "e")
 #' compute_item_expected_scores(itemIRTree) # orthogonal, standard-normal latent traits
 #' compute_item_expected_scores(itemIRTree, vcovIRTree)
 #'
+#' sM <- make_scoring_matrix_aem(1:5, "simultaneous")[, -4]
 #' test <- make_test(sM,
 #'                   generate_slopes(11, sM, c(1, 2, 3)),
 #'                   generate_intercepts(11, sM,
