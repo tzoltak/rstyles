@@ -46,6 +46,18 @@ compute_item_expected_scores(itemGPCM) # orthogonal, standard-normal latent trai
 compute_item_expected_scores(itemGPCM, vcov)
 compute_item_expected_scores(itemIRTree) # orthogonal, standard-normal latent traits
 compute_item_expected_scores(itemIRTree, vcovIRTree)
+
+test <- make_test(sM,
+                  generate_slopes(11, sM, c(1, 2, 3)),
+                  generate_intercepts(11, sM,
+                                      FUNd = seq,
+                                      argsd = list(from = -1.5, to = 1.5,
+                                      length.out = 11),
+                                      FUNt = seq,
+                                      argst = list(from = -1.5, to = 1.5,
+                                      length.out = 4)),
+                  "simultaneous")
+sapply(compute_item_expected_scores(test, vcov), identity)
 }
 \seealso{
 \code{\link{make_item}}

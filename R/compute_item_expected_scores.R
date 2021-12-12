@@ -71,6 +71,12 @@ compute_item_expected_scores.rstylesItem <- function(x,
   if (!is.null(x$editResponse)) {
     warning("Item's editing response rule is not taken into account.")
   }
+  if (is.null(colnames(vcov))) {
+    colnames(vcov) <- colnames(x$scoringMatrix)
+  }
+  if (is.null(rownames(vcov))) {
+    rownames(vcov) <- colnames(vcov)
+  }
 
   limits <- c(-6, 6)
   if (ncol(x$scoringMatrix) > 6) {
