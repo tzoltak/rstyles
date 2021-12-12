@@ -82,9 +82,11 @@ compute_item_expected_scores.rstylesItem <- function(x,
           limits[1], " and ", limits[2], " on each of ",
           ncol(x$scoringMatrix), " dimensions (overall ",
           n^ncol(x$scoringMatrix), " quadrature points).")
-  theta <- rep(list(seq(limits[1], limits[2], length.out = n)),
-               ncol(x$scoringMatrix))
-  names(theta) <- colnames(x$scoringMatrix)
+  theta <- lapply(diag(vcov)^0.5,
+                  function(x, limits, n) {
+                    limits = x*limits
+                    return(seq(limits[1], limits[2], length.out = n))
+                  }, limits = limits, n = n)
   theta <- as.matrix(expand.grid(theta))
 
   w <- mvtnorm::dmvnorm(theta, sigma = vcov)
