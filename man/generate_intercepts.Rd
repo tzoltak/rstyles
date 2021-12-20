@@ -70,13 +70,17 @@ of responding process. In such a case:
 \strong{Assuming \emph{simultaneous} response process:}
 
 Assuming \emph{simultaneous} response process test item must be characterized
-by a set of intercept parameters describing \emph{difficulty} of transition
-between consecutive categories of the response scale. It is convenient to
-define such intercepts generating process as a two-step procedure:
-1) generate general \emph{difficulties} of the whole items and only then
-2) for each item generate values of thresholds relatively to the item
+by a set of \emph{intercept} parameters describing relative frequency of
+specific categories of the response scale. However, it is convenient to
+define model parameters in another parameterisation, in which item
+\emph{thresholds} describe {difficulty} of switching between consecutive
+categories of the response scale, and only then transform these
+\emph{thresholds} to \emph{intercepts}. Function follows this approach and:
+1) first generates general \emph{difficulties} of the whole items, then
+2) for each item generates values of thresholds relatively to the item
 \code{difficulty}, imposing identifiability assumption that these values must
-sum up to 0. Consequently in such a case:
+sum up to 0, and finally 3) computes intercepts given values of parameters
+generated in the previous steps. Consequently in such a case:
 \itemize{
   \item{argument \code{FUNd} provides a function that will be used to
         generate general \code{difficulties} of items;}
@@ -157,5 +161,6 @@ generate_intercepts(20, sM,
                                              length.out = 4))
 }
 \seealso{
-\code{\link{generate_slopes}}, \code{\link{make_test}}
+\code{\link{generate_slopes}}, \code{\link{make_test}},
+\code{\link{thresholds2intercepts}}, \code{\link{intercepts2thresholds}}
 }

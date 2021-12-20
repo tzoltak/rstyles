@@ -215,13 +215,17 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #' \strong{Assuming \emph{simultaneous} response process:}
 #'
 #' Assuming \emph{simultaneous} response process test item must be characterized
-#' by a set of intercept parameters describing \emph{difficulty} of transition
-#' between consecutive categories of the response scale. It is convenient to
-#' define such intercepts generating process as a two-step procedure:
-#' 1) generate general \emph{difficulties} of the whole items and only then
-#' 2) for each item generate values of thresholds relatively to the item
+#' by a set of \emph{intercept} parameters describing relative frequency of
+#' specific categories of the response scale. However, it is convenient to
+#' define model parameters in another parameterisation, in which item
+#' \emph{thresholds} describe {difficulty} of switching between consecutive
+#' categories of the response scale, and only then transform these
+#' \emph{thresholds} to \emph{intercepts}. Function follows this approach and:
+#' 1) first generates general \emph{difficulties} of the whole items, then
+#' 2) for each item generates values of thresholds relatively to the item
 #' \code{difficulty}, imposing identifiability assumption that these values must
-#' sum up to 0. Consequently in such a case:
+#' sum up to 0, and finally 3) computes intercepts given values of parameters
+#' generated in the previous steps. Consequently in such a case:
 #' \itemize{
 #'   \item{argument \code{FUNd} provides a function that will be used to
 #'         generate general \code{difficulties} of items;}
@@ -251,7 +255,8 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #' not \emph{thresholds} what are returned} (and intercept for a category
 #' \emph{g} is a sum of \emph{thresholds} from the first category up to the
 #' category \emph{g} minus minus item difficulty).
-#' @seealso \code{\link{generate_slopes}}, \code{\link{make_test}}
+#' @seealso \code{\link{generate_slopes}}, \code{\link{make_test}},
+#' \code{\link{thresholds2intercepts}}, \code{\link{intercepts2thresholds}}
 #' @examples
 #' # 5 items with 5-point response scale assuming "sequential" item response
 #' # process with "pseudo-items" intercepts sampled from a uniform distribution
@@ -422,11 +427,8 @@ generate_intercepts_sml <- function(nItems, scoringMatrix, FUNd, argsd,
     }
     intercepts[[i]] <-
       sort(intercepts[[i]], decreasing = TRUE) - mean(intercepts[[i]])
-    intercepts[[i]] <- cumsum(intercepts[[i]] - difficulties[i])
+    intercepts[[i]] <- intercepts[[i]] - difficulties[i]
   }
-  intercepts <- t(matrix(unlist(intercepts), ncol = nItems,
-                         dimnames =
-                           list(paste0("d", 1L:(nrow(scoringMatrix) - 1L)),
-                                NULL)))
-  return(cbind(d0 = rep(0, nrow(intercepts)), intercepts))
+  return(thresholds2intercepts(matrix(unlist(intercepts),
+                                      nrow = nItems, byrow = TRUE)))
 }
