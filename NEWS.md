@@ -1,3 +1,9 @@
+# rstyles 0.6.0 (23.12.2021)
+
+## New features
+
+- New functions `make_scoring_matrix_rt()` and `make_scoring_matrix_stz()` enabling convienient construction of scoring matrices using *random thresholds* and *sum to zero* approaches.
+
 # rstyles 0.5.0 (20.12.2021)
 
 ## New features

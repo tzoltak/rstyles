@@ -54,8 +54,9 @@ matrix of integers
 }
 \description{
 Makes response matrix, i.e. matrix describing how each latent
-trait (represented in columns) affects (or not) chances to answer each
-response (represented in rows).
+trait (represented in columns) affects (or not) chances to choose each
+response category (represented in rows) assuming effects of
+\emph{acquiescence}, \emph{extreme} and \emph{middle} response styles.
 }
 \details{
 \strong{\code{sequence} other than "simultaneous":}

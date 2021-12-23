@@ -1,7 +1,8 @@
 #' @title Make scoring matrix
 #' @description Makes response matrix, i.e. matrix describing how each latent
-#' trait (represented in columns) affects (or not) chances to answer each
-#' response (represented in rows).
+#' trait (represented in columns) affects (or not) chances to choose each
+#' response category (represented in rows) assuming effects of
+#' \emph{acquiescence}, \emph{extreme} and \emph{middle} response styles.
 #' @param responses vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
 #' @param sequence text: "simultaneous" or a three-letters sequence describing
@@ -290,9 +291,9 @@ make_scoring_matrix_trivial <- function(responses, nTraits = 1L,
   }
   stopifnot("Argument `nTraits` must be a non-negative integer." =
               is.numeric(nTraits),
-            "Argument `nnTraits` must be a non-negative integer." =
+            "Argument `nTraits` must be a non-negative integer." =
               length(nTraits) == 1L,
-            "Argument `nMiddle` can't contain NAs." =
+            "Argument `nTraits` can't contain NAs." =
               !is.na(nTraits),
             "Argument `nTraits` must be a non-negative integer." =
               as.integer(nTraits) == nTraits,
@@ -309,6 +310,49 @@ make_scoring_matrix_trivial <- function(responses, nTraits = 1L,
   return(matrix(rep((1L:length(responses)) - 1, length(traitsNames)),
                 nrow = length(responses),
                 dimnames = list(responses, traitsNames)))
+}
+#' @title Make scoring matrix
+#' @description Makes response matrix using \emph{random thresholds} approach.
+#' @param responses vector of available responses (\emph{categories}) - can be
+#' a character vector or positive integer describing number of responses
+#' @details Be aware that while using this kind of response matrix latent
+#' traits must be set orthogonal to assure model identifiability.
+#' @return matrix of integers
+#' @examples
+#' make_scoring_matrix_rt(5)
+#' @export
+make_scoring_matrix_rt <- function(responses) {
+  responses <- assert_responses(responses)
+  if (inherits(responses, "try-error")) {
+    stop(sub("^.*: \\n +", "", responses))
+  }
+  sM <- matrix(0L, nrow = length(responses), ncol = length(responses),
+               dimnames = list(responses,
+                               c("i", paste0("rt", 1L:(length(responses) - 1L)))))
+  sM[lower.tri(sM, diag = TRUE)] <- 1L
+  sM[, 1L] <- 0L:(nrow(sM) - 1L)
+  return(sM)
+}
+#' @title Make scoring matrix
+#' @description Makes response matrix using \emph{sum to zero} approach.
+#' @param responses vector of available responses (\emph{categories}) - can be
+#' a character vector or positive integer describing number of responses
+#' @return matrix of integers
+#' @examples
+#' make_scoring_matrix_stz(5)
+#' @export
+make_scoring_matrix_stz <- function(responses) {
+  responses <- assert_responses(responses)
+  if (inherits(responses, "try-error")) {
+    stop(sub("^.*: \\n +", "", responses))
+  }
+  sM <- matrix(0L, nrow = length(responses), ncol = length(responses),
+               dimnames = list(responses,
+                               c("i", paste0("stz", 1L:(length(responses) - 1L)))))
+  diag(sM) <- 1L
+  sM[1L, ] <- -1L
+  sM[, 1L] <- 0L:(nrow(sM) - 1L)
+  return(sM)
 }
 # common assertions
 assert_responses <- function(responses) {
