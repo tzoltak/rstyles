@@ -240,3 +240,9 @@ Henninger, M., & Meiser, T. (2020). Different approaches to modeling response st
 Plieninger, H. (2017). Mountain or Molehill? A Simulation Study on the Impact of Response Styles. *Educational and Psychological Measurement, 77*(1), 32–53. <https://doi.org/10.1177/0013164416636655>
 
 Plieninger, H. & Heck, D.W. (2018). A New Model for Acquiescence at the Interface of Psychometrics and Cognitive Psychology. *Multivariate Behavioral Research, 53*(5), 633-654, <https://doi.org/10.1080/00273171.2018.1469966>
+
+## Funding
+
+Package is developed within a project *Understanding response styles in self-report data: consequences, remedies and sources* that is financed by the Polish National Science Centre (NCN) research grant ([2019/33/B/HS6/00937](https://projekty.ncn.gov.pl/index.php?projekt_id=446393)).
+
+![NCN logo](https://rstyles.ifispan.edu.pl/wp-content/uploads/2021/01/xlogo-ncn-en-768x67.png.pagespeed.ic.prFVuamzNv.webp)
