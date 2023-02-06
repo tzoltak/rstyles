@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_responses.R
 \name{generate_item_responses_sqn}
 \alias{generate_item_responses_sqn}
-\title{Internals: simulating responding to item in a 'sequential' (IRTree) way}
+\title{Internals: simulating responding to item in the IRTree way}
 \usage{
 generate_item_responses_sqn(
   theta,
@@ -14,22 +14,22 @@ generate_item_responses_sqn(
 )
 }
 \arguments{
-\item{theta}{matrix of latent traits' values}
+\item{theta}{a matrix of latent traits' values}
 
-\item{scoringMatrix}{matrix describing scoring patterns on each latent trait}
+\item{scoringMatrix}{a matrix describing scoring patterns on each latent trait}
 
-\item{slopes}{vector of slope parameters of each trait}
+\item{slopes}{a vector of slope parameters for each trait}
 
-\item{intercepts}{intercept parameters}
+\item{intercepts}{a vector of intercept parameters}
 
-\item{editResponse}{optional function returning scoring matrix that should be
-used instead that provided by \code{scoringMatrix}; this should be function
+\item{editResponse}{an optional function returning scoring matrix that should
+be used instead that provided by \code{scoringMatrix}; this should be function
 accepting two arguments: \code{response} - generated response (by the model
 described with the first column of the \code{scoringMatrix}) that is supposed
 to be \emph{edited} and \code{scoringMatrix} - current scoring matrix (to be
 replaced)}
 
-\item{decidingOnPreviousResponse}{logical value indicating whether first
+\item{decidingOnPreviousResponse}{a logical value indicating whether first
 column of provided scoring matrix describes making decision whether to
 respond on the basis of responses to previous items or not (in this first
 case \emph{negative} choice shouldn't reduce number of rows in a response
@@ -39,8 +39,8 @@ matrix)}
 vector of responses on item
 }
 \description{
-Function generates responses 'sequentially`, i.e. using IRTree
-approach. It goes through consecutive columns of a scoring matrix,
+Function generates responses using IRTree approach, i.e.
+'sequentially`. It goes through consecutive columns of a scoring matrix,
 calling \code{\link{generate_item_responeses_gpcm}} to get responses at
 a given node of a tree and the recursively calls itself on subsets of
 observations with a given response with reduced scoring matrix.

@@ -15,9 +15,9 @@ generate_slopes(
 )
 }
 \arguments{
-\item{nItems}{number of items for which slopes will be generated}
+\item{nItems}{the number of items for which slopes will be generated}
 
-\item{scoringMatrix}{\emph{scoring matrix} that will be used for the
+\item{scoringMatrix}{a \emph{scoring matrix} that will be used for the
 generated items, specifically generated with
 \code{\link{make_scoring_matrix_aem}} or
 \code{\link{make_scoring_matrix_trivial}}}
@@ -26,19 +26,18 @@ generated items, specifically generated with
 named and in typical applications should be numeric vectors of the length of
 one or of the number of columns of the \code{scoringMatrix}}
 
-\item{FUN}{function that will be used to generate slopes, typically}
+\item{FUN}{a function that will be used to generate slopes, typically}
 
-\item{nReversed}{number of \emph{reversed} (\emph{revers-keyed}) items, i.e.
-items that}
+\item{nReversed}{the number of \emph{reversed} (\emph{revers-keyed}) items}
 
-\item{reverseTraits}{character vector containing names of traits for which
+\item{reverseTraits}{a character vector containing names of traits for which
 items should be \emph{reversed} (if \code{nReversed > 0}); default value is
 "i", that is the name assigned to the trait that is assumed to describe
 \emph{the trait that scale is supposed to measure} (i.e. trait that is not
 related with response styles) by \code{\link{make_scoring_matrix_aem}} when
-called with argument \code{sequence = "simultaneous"}}
+called with argument \code{sequence = "gpcm"}}
 
-\item{reverseIndep}{logical value indicating whether sampling items that are
+\item{reverseIndep}{a logical value indicating whether sampling items that are
 \emph{reversed} should be performed independently for each trait (given by
 \code{reverseTraits}) or for all the traits simultaneously (this argument
 is only considered if \code{nReversed > 0} and there is more than one trait
@@ -48,7 +47,7 @@ given by \code{reverseTraits})
 - see details}
 }
 \value{
-Matrix of \code{nItems} rows and number of columns equal to the
+A matrix of \code{nItems} rows and number of columns equal to the
 length of vectors provided by \code{...}.
 }
 \description{
@@ -113,7 +112,7 @@ generate_slopes(10, sM, FUN = rtruncnorm,
 # 10 items with slopes generated from a normal distributions with mean of 1
 # and standard deviation of 0.2 with half of the items "reverse-keyed" on
 # the trait "i"
-sM <- make_scoring_matrix_aem(5, sequence = "simultaneous")
+sM <- make_scoring_matrix_aem(5, sequence = "gpcm")
 generate_slopes(10, sM, FUN = rnorm, mean = 1, sd = 0.2,
                 nReversed = 5, reverseTraits = "i")
 }

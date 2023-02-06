@@ -1,8 +1,22 @@
+# rstyles 0.7.0 (6.02.2023)
+
+## New features
+
+- New functions `make_mplus_irtree_model_syntax()` and `make_mplus_gpcm_model_syntax()` enabling convenient preparing Mplus syntax specifying response-style models.
+
+## Bug fixes
+
+- `expand_responses()` deals with data with responses being a *tibble*.
+
+## Other changes
+
+- Considering remarks of Plieninger (2020) regarding the interpretation of IRTree models the distinction between *sequential* and *simultaneous* response processes was (almost completely) removed from the package parameter names and descriptions in documentation in favor of labeling them as *IRTree* and *GPCM*.
+
 # rstyles 0.6.0 (23.12.2021)
 
 ## New features
 
-- New functions `make_scoring_matrix_rt()` and `make_scoring_matrix_stz()` enabling convienient construction of scoring matrices using *random thresholds* and *sum to zero* approaches.
+- New functions `make_scoring_matrix_rt()` and `make_scoring_matrix_stz()` enabling convenient construction of scoring matrices using *random thresholds* and *sum to zero* approaches.
 
 # rstyles 0.5.0 (20.12.2021)
 
@@ -10,13 +24,13 @@
 
 - New function `generate_item_expected_scores()` that allows to generate (by numerical integration) expected probabilities of responses (response categories) given an item object or test object and covariance matrix of latent traits.
   - Dependency from the package *mvtnorm* was added to be able to compute weights for quadrature points.
-- New utility functions `thresholds2intercepts()` and `intercepts2thresholds()` allowing conversion between *thresholds* and *intercepts* parametrisations of *simultaneous* GPCM items.
+- New utility functions `thresholds2intercepts()` and `intercepts2thresholds()` allowing conversion between *thresholds* and *intercepts* parameterizations of GPCM items.
 
 ## Bug fixes
 
 - `expand_responses()` do not take into account missing values in the data while performing assertion that all values in the data are members of the set of values defined by rownames of the `scoringMatrix`.
-- `generate_intercepts()` correctly transforms parameters generated in a parametrisation involving item difficulty and thresholds relative to his difficulty into parametrisation of intercepts in case of *simultaneous* items (i.e. it cumulatively sums up thresholds and subtracts difficulty instead of adding difficulty to thresholds).
-  - Documentation was corrected to explain, that in case of *simultaneous* mode arguments define how values of *thresholds* should be generated but that function returns accordingly computed *intercepts*.
+- `generate_intercepts()` correctly transforms parameters generated in a parameterization involving item difficulty and thresholds relative to his difficulty into parametrization of intercepts in case of GPCM items (i.e. it cumulatively sums up thresholds and subtracts difficulty instead of adding difficulty to thresholds).
+  - Documentation was corrected to explain, that in case of GPCM mode arguments define how values of *thresholds* should be generated but that function returns accordingly computed *intercepts*.
 
 ## Other changes
 
@@ -32,7 +46,7 @@
 
 - `make_test()` assigns names to the created items by default and provides additional `names` argument if user wants to provide names himself/herself.
 - `generate_test_responses()` uses items' names (if there are any) to name columns of the returned matrix.
-- `generate_test_responses()` converts matrix it returns to numeric one (if only this is possible without loss of information); it also provides additional argument `tryConvertToNumeric` that allows to bring back its former behaviour (i.e. returning a character matrix).
+- `generate_test_responses()` converts matrix it returns to numeric one (if only this is possible without loss of information); it also provides additional argument `tryConvertToNumeric` that allows to bring back its former behavior (i.e. returning a character matrix).
 - `generate_intercepts_sml()`, and consequently `generate_intercepts()` when called with `FUNt` argument, returns intercepts matrix with additional first columns of zeros to make it compatible with the format that uses function `simdata()` from *mirt* package (`generate_test_responses()` was, and still is, able to deal with providing it intercepts either with or without such additional zeros).
 
 ## Documentation

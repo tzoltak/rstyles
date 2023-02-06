@@ -2,26 +2,26 @@
 % Please edit documentation in R/generate_responses.R
 \name{generate_item_responses_sml}
 \alias{generate_item_responses_sml}
-\title{Internals: simulating responding to item in a 'simultaneous' way}
+\title{Internals: simulating responding to item in the GPCM way}
 \usage{
 generate_item_responses_sml(theta, scoringMatrix, slopes, intercepts)
 }
 \arguments{
-\item{theta}{matrix of latent traits' values}
+\item{theta}{a matrix of latent traits' values}
 
-\item{scoringMatrix}{matrix describing scoring patterns on each latent trait}
+\item{scoringMatrix}{a matrix describing scoring patterns on each latent trait}
 
-\item{slopes}{vector of slope parameters of each trait}
+\item{slopes}{a vector of slope parameters of each trait}
 
-\item{intercepts}{intercept parameters}
+\item{intercepts}{a vector of intercept parameters}
 }
 \value{
-vector of responses on item
+a vector of responses on item
 }
 \description{
-Function generates responses 'simultaneously` with a whole
-scoring matrix used at once. Only (G)PCM approach is suitable in such a case,
-because with complicated scoring matrices there is no guarantee that
+Function generates responses in the GPCM way with a whole
+scoring matrix used at once. Only (G)PCM/NRM approach is suitable in such
+a case, because with complicated scoring matrices there is no guarantee that
 probabilities of responses are increasing along with order of responses
 (rows) in a scoring matrix. Consequently, no normal ogive models can be used.
 }

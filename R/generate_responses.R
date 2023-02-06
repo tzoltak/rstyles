@@ -1,13 +1,13 @@
 #' @title Generate simulated data
 #' @description Generates simulated responses to a test given informations
 #' about items values of latent traits.
-#' @param theta matrix (or data frame) of already generated latent traits'
+#' @param theta a matrix (or data frame) of already generated latent traits'
 #' values
-#' @param items list with test items' specification
-#' @param performAssertions logical value indicating whether function should
+#' @param items a list with test items' specification
+#' @param performAssertions a logical value indicating whether function should
 #' perform assertions of the other arguments (\code{TRUE} by default, may be
 #' changed to \code{FALSE} for a little performance gain)
-#' @param tryConvertToNumeric logical value indicating whether function should
+#' @param tryConvertToNumeric a logical value indicating whether function should
 #' try to convert generated responses to numeric values (technically responses
 #' are get from rownames of the items' scoring matrices that are character
 #' vectors)
@@ -63,7 +63,7 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE,
         whichRows <-
           colSums(t(responses[, 1L:(i - 1L), drop = FALSE]) ==
                     responses[j, 1L:(i - 1L)]) == (i - 1L)
-        if (items[[i]]$mode == 'sequential') {
+        if (items[[i]]$mode == 'irtree') {
           responses[whichRows, i] <-
             generate_item_responses_sqn(theta[whichRows, , drop = FALSE],
                                         scoringMatrixTemp,
@@ -71,7 +71,7 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE,
                                         items[[i]]$intercepts,
                                         items[[i]]$editResponse,
                                         TRUE)
-        } else {#simultaneous
+        } else {#gpcm
           responses[whichRows, i] <-
             generate_item_responses_sml(theta[whichRows, , drop = FALSE],
                                         scoringMatrixTemp,
@@ -80,12 +80,12 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE,
         }
       }
     } else {# if there is no scoring on previous responses, there is no need for looping through combinations of previuos responses
-      if (items[[i]]$mode == 'sequential') {
+      if (items[[i]]$mode == 'irtree') {
         responses[, i] <- generate_item_responses_sqn(theta, scoringMatrix,
                                                       items[[i]]$slopes,
                                                       items[[i]]$intercepts,
                                                       items[[i]]$editResponse)
-      } else {#simultaneous
+      } else {#gpcm
         responses[, i] <- generate_item_responses_sml(theta, scoringMatrix,
                                                       items[[i]]$slopes,
                                                       items[[i]]$intercepts)
@@ -102,9 +102,9 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE,
   }
   return(responses)
 }
-#' @title Internals: simulating responding to item in a 'sequential' (IRTree) way
-#' @description Function generates responses 'sequentially`, i.e. using IRTree
-#' approach. It goes through consecutive columns of a scoring matrix,
+#' @title Internals: simulating responding to item in the IRTree way
+#' @description Function generates responses using IRTree approach, i.e.
+#' 'sequentially`. It goes through consecutive columns of a scoring matrix,
 #' calling \code{\link{generate_item_responeses_gpcm}} to get responses at
 #' a given node of a tree and the recursively calls itself on subsets of
 #' observations with a given response with reduced scoring matrix.
@@ -112,17 +112,17 @@ generate_test_responses <- function(theta, items, performAssertions = TRUE,
 #' Because function internally relies on calling
 #' \code{\link{generate_item_responeses_gpcm}}, no normal ogive models can be
 #' used (this may be changed in the future versions).
-#' @param theta matrix of latent traits' values
-#' @param scoringMatrix matrix describing scoring patterns on each latent trait
-#' @param slopes vector of slope parameters of each trait
-#' @param intercepts intercept parameters
-#' @param editResponse optional function returning scoring matrix that should be
-#' used instead that provided by \code{scoringMatrix}; this should be function
+#' @param theta a matrix of latent traits' values
+#' @param scoringMatrix a matrix describing scoring patterns on each latent trait
+#' @param slopes a vector of slope parameters for each trait
+#' @param intercepts a vector of intercept parameters
+#' @param editResponse an optional function returning scoring matrix that should
+#' be used instead that provided by \code{scoringMatrix}; this should be function
 #' accepting two arguments: \code{response} - generated response (by the model
 #' described with the first column of the \code{scoringMatrix}) that is supposed
 #' to be \emph{edited} and \code{scoringMatrix} - current scoring matrix (to be
 #' replaced)
-#' @param decidingOnPreviousResponse logical value indicating whether first
+#' @param decidingOnPreviousResponse a logical value indicating whether first
 #' column of provided scoring matrix describes making decision whether to
 #' respond on the basis of responses to previous items or not (in this first
 #' case \emph{negative} choice shouldn't reduce number of rows in a response
@@ -202,17 +202,17 @@ generate_item_responses_sqn <- function(theta, scoringMatrix, slopes,
   }
   return(responses)
 }
-#' @title Internals: simulating responding to item in a 'simultaneous' way
-#' @description Function generates responses 'simultaneously` with a whole
-#' scoring matrix used at once. Only (G)PCM approach is suitable in such a case,
-#' because with complicated scoring matrices there is no guarantee that
+#' @title Internals: simulating responding to item in the GPCM way
+#' @description Function generates responses in the GPCM way with a whole
+#' scoring matrix used at once. Only (G)PCM/NRM approach is suitable in such
+#' a case, because with complicated scoring matrices there is no guarantee that
 #' probabilities of responses are increasing along with order of responses
 #' (rows) in a scoring matrix. Consequently, no normal ogive models can be used.
-#' @param theta matrix of latent traits' values
-#' @param scoringMatrix matrix describing scoring patterns on each latent trait
-#' @param slopes vector of slope parameters of each trait
-#' @param intercepts intercept parameters
-#' @return vector of responses on item
+#' @param theta a matrix of latent traits' values
+#' @param scoringMatrix a matrix describing scoring patterns on each latent trait
+#' @param slopes a vector of slope parameters of each trait
+#' @param intercepts a vector of intercept parameters
+#' @return a vector of responses on item
 #' @seealso \code{link{generate_test_responses}},
 #' \code{\link{generate_item_responses_sqn}},
 #' \code{\link{generate_item_responeses_gpcm}}
@@ -236,11 +236,11 @@ generate_item_responses_sml <- function(theta, scoringMatrix, slopes,
 #' \code{\link{generate_item_responses_sml}} that are used to match theirs
 #' arguments \code{theta}, \code{scoringMatrix} and \code{slopes} before
 #' passing them to \code{generate_item_responeses_gpcm}).
-#' @param theta matrix of latent traits' values
-#' @param weightsMatrix matrix of discrimination parameters (being
+#' @param theta a matrix of latent traits' values
+#' @param weightsMatrix a matrix of slope parameters (being
 #' multiplication of a design matrix by discriminations of factors)
-#' @param intercepts intercept parameters
-#' @return vector of responses on item
+#' @param intercepts a vector of intercept parameters
+#' @return a vector of responses on item
 generate_item_responeses_gpcm <- function(theta, weightsMatrix, intercepts) {
   probs <- matrix(NA_real_,
                   nrow = nrow(theta), ncol = nrow(weightsMatrix),

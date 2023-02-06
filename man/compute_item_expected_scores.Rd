@@ -13,13 +13,13 @@ compute_item_expected_scores(x, vcov)
 \method{compute_item_expected_scores}{rstylesItem}(x, vcov = diag(ncol(x$scoringMatrix)))
 }
 \arguments{
-\item{x}{object of class \emph{rstylesItem} or \emph{rstylesTest}}
+\item{x}{an object of class \emph{rstylesItem} or \emph{rstylesTest}}
 
-\item{vcov}{covariance matrix of latent traits (in line with item's scoring
+\item{vcov}{a covariance matrix of latent traits (in line with item's scoring
 matrix); if not provided uncorrelated standard normal is used}
 }
 \value{
-table
+A table
 }
 \description{
 Function generates expected distribution of item scores given
@@ -28,10 +28,10 @@ items) object constructed using \code{\link{make_test}} and covariance matrix
 of latent traits, assuming multivariate-normal distribution of latent traits.
 }
 \examples{
-itemGPCM <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "simultaneous")[, -4],
+itemGPCM <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "gpcm")[, -4],
                       slopes = c(i = 1, m = 2, e = 3),
                       intercepts = cumsum(c(0, seq(-0.5, 0.5, length.out = 4))),
-                      mode = "simultaneous")
+                      mode = "gpcm")
 vcov <- matrix(c( 1,    0.5, -0.5,
                   0.5,  1,   -0.25,
                  -0.5, -0.25, 1),
@@ -42,13 +42,13 @@ compute_item_expected_scores(itemGPCM, vcov)
 itemIRTree <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "mae"),
                         slopes = c(m = 1, a = 1, e = 1),
                         intercepts = c(m1 = 0, a1 = 0, e1 = 0),
-                        mode = "sequential")
+                        mode = "irtree")
 vcovIRTree <- vcov
 colnames(vcovIRTree) <- rownames(vcovIRTree) <- c("a", "m", "e")
 compute_item_expected_scores(itemIRTree) # orthogonal, standard-normal latent traits
 compute_item_expected_scores(itemIRTree, vcovIRTree)
 
-sM <- make_scoring_matrix_aem(1:5, "simultaneous")[, -4]
+sM <- make_scoring_matrix_aem(1:5, "gpcm")[, -4]
 test <- make_test(sM,
                   generate_slopes(11, sM, c(1, 2, 3)),
                   generate_intercepts(11, sM,
@@ -58,7 +58,7 @@ test <- make_test(sM,
                                       FUNt = seq,
                                       argst = list(from = -1.5, to = 1.5,
                                       length.out = 4)),
-                  "simultaneous")
+                  "gpcm")
 sapply(compute_item_expected_scores(test, vcov), identity)
 }
 \seealso{

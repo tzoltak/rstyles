@@ -1,24 +1,23 @@
 #' @title Generating parameters of items - slopes (discrimination)
 #' @description Function generates a matrix of items' slope (discrimination)
 #' parameters.
-#' @param nItems number of items for which slopes will be generated
-#' @param scoringMatrix \emph{scoring matrix} that will be used for the
+#' @param nItems the number of items for which slopes will be generated
+#' @param scoringMatrix a \emph{scoring matrix} that will be used for the
 #' generated items, specifically generated with
 #' \code{\link{make_scoring_matrix_aem}} or
 #' \code{\link{make_scoring_matrix_trivial}}
 #' @param ... arguments that will be passed to \code{FUN}; should rather be
 #' named and in typical applications should be numeric vectors of the length of
 #' one or of the number of columns of the \code{scoringMatrix}
-#' @param FUN function that will be used to generate slopes, typically
-#' @param nReversed number of \emph{reversed} (\emph{revers-keyed}) items, i.e.
-#' items that
-#' @param reverseTraits character vector containing names of traits for which
+#' @param FUN a function that will be used to generate slopes, typically
+#' @param nReversed the number of \emph{reversed} (\emph{revers-keyed}) items
+#' @param reverseTraits a character vector containing names of traits for which
 #' items should be \emph{reversed} (if \code{nReversed > 0}); default value is
 #' "i", that is the name assigned to the trait that is assumed to describe
 #' \emph{the trait that scale is supposed to measure} (i.e. trait that is not
 #' related with response styles) by \code{\link{make_scoring_matrix_aem}} when
-#' called with argument \code{sequence = "simultaneous"}
-#' @param reverseIndep logical value indicating whether sampling items that are
+#' called with argument \code{sequence = "gpcm"}
+#' @param reverseIndep a logical value indicating whether sampling items that are
 #' \emph{reversed} should be performed independently for each trait (given by
 #' \code{reverseTraits}) or for all the traits simultaneously (this argument
 #' is only considered if \code{nReversed > 0} and there is more than one trait
@@ -50,7 +49,7 @@
 #' way to change this (but one may still use \code{\link{cbind}} to collapse
 #' results of several separate \code{generate_slopes} calls to achieve this
 #' goal).
-#' @returns Matrix of \code{nItems} rows and number of columns equal to the
+#' @return A matrix of \code{nItems} rows and number of columns equal to the
 #' length of vectors provided by \code{...}.
 #' @seealso \code{\link{generate_intercepts}}, \code{\link{make_test}}
 #' @examples
@@ -85,7 +84,7 @@
 #' # 10 items with slopes generated from a normal distributions with mean of 1
 #' # and standard deviation of 0.2 with half of the items "reverse-keyed" on
 #' # the trait "i"
-#' sM <- make_scoring_matrix_aem(5, sequence = "simultaneous")
+#' sM <- make_scoring_matrix_aem(5, sequence = "gpcm")
 #' generate_slopes(10, sM, FUN = rnorm, mean = 1, sd = 0.2,
 #'                 nReversed = 5, reverseTraits = "i")
 #' @export
@@ -177,25 +176,25 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #' @title Generating parameters of items - intercepts (thresholds/difficulties)
 #' @description Function generates a matrix of items' intercept
 #' (thresholds/difficulties) parameters.
-#' @param nItems number of items for which intercepts will be generated
-#' @param scoringMatrix \emph{scoring matrix} that will be used for the
+#' @param nItems the number of items for which intercepts will be generated
+#' @param scoringMatrix a \emph{scoring matrix} that will be used for the
 #' generated items, specifically generated with
 #' \code{\link{make_scoring_matrix_aem}} or
 #' \code{\link{make_scoring_matrix_trivial}}
-#' @param FUNd function that will be used to generate item difficulties,h
+#' @param FUNd a function that will be used to generate item difficulties,h
 #' typically \code{\link[stats]{Uniform}}, \code{\link[stats]{Normal}} or
 #' \code{\link[truncnorm]{rtruncnorm}}
-#' @param argsd list of arguments to be passed to \code{FUNd}
-#' @param FUNt optionally function that will be used to generate item
+#' @param argsd a list of arguments to be passed to \code{FUNd}
+#' @param FUNt optionally a function that will be used to generate item
 #' thresholds (i.e. difficulties of categories relative to difficulty of the
-#' whole item), assuming \emph{simultaneous} item responding process;
+#' whole item), assuming \emph{gpcm} item responding process;
 #' typically \code{\link[stats]{Uniform}}, \code{\link[stats]{Normal}} or
 #' \code{\link[truncnorm]{rtruncnorm}}; if not set item responding process is
-#' assumed to be a \emph{sequential} one;
-#' @param argst optionally list of arguments to be passed to \code{FUNt}
-#' @details \strong{Assuming \emph{sequential} response process:}
+#' assumed to be a \emph{irtree} one;
+#' @param argst optionally a list of arguments to be passed to \code{FUNt}
+#' @details \strong{Assuming \emph{irtree} response process:}
 #'
-#' Assuming \emph{sequential} response process test item must be characterized
+#' Assuming \emph{irtree} response process test item must be characterized
 #' by a set of intercept parameters describing individual thresholds of binary
 #' \emph{pseudo-items} modeling consecutive decisions in the assumed sequence
 #' of responding process. In such a case:
@@ -212,9 +211,9 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #'         \emph{pseudo-items} across all the items;}
 #'   \item{arguments \code{FUNt} and \code{argst} are not used.}
 #' }
-#' \strong{Assuming \emph{simultaneous} response process:}
+#' \strong{Assuming \emph{GPCM} response process:}
 #'
-#' Assuming \emph{simultaneous} response process test item must be characterized
+#' Assuming \emph{GPCM} response process test item must be characterized
 #' by a set of \emph{intercept} parameters describing relative frequency of
 #' specific categories of the response scale. However, it is convenient to
 #' define model parameters in another parameterisation, in which item
@@ -250,7 +249,7 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #' Returned \emph{intercepts} are computed by summing general item
 #' \emph{difficulty} and values of the relative thresholds generated for
 #' a given item and then computing cumulative sum of this vector.
-#' @returns Matrix of \code{nItems} rows and number of columns equal to the
+#' @return A matrix of \code{nItems} rows and number of columns equal to the
 #' number of intercepts. \strong{Be aware that these are \emph{intercepts} and
 #' not \emph{thresholds} what are returned} (and intercept for a category
 #' \emph{g} is a sum of \emph{thresholds} from the first category up to the
@@ -258,17 +257,17 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #' @seealso \code{\link{generate_slopes}}, \code{\link{make_test}},
 #' \code{\link{thresholds2intercepts}}, \code{\link{intercepts2thresholds}}
 #' @examples
-#' # 5 items with 5-point response scale assuming "sequential" item response
+#' # 5 items with 5-point response scale assuming IRTree item response
 #' # process with "pseudo-items" intercepts sampled from a uniform distribution
 #' # with limits +-1.5
 #' sM <- make_scoring_matrix_aem(5, sequence = "mae")
 #' generate_intercepts(5, sM, runif, list(min = -1.5, max = 1.5))
-#' # 10 items with 5-point response scale assuming "sequential" item response
+#' # 10 items with 5-point response scale assuming IRTree item response
 #' # process with "pseudo-items" intercepts sampled from a normal distribution
 #' # with the mean of 0 and the standard deviation of 1.5
 #' sM <- make_scoring_matrix_aem(5, sequence = "mae")
 #' generate_intercepts(5, sM, rnorm, list(mean = 0, sd = 1))
-#' # 10 items with 5-point response scale assuming "sequential" item response
+#' # 10 items with 5-point response scale assuming IRTree item response
 #' # process with "pseudo-items" intercepts sampled from a uniform distribution
 #' # with limits set to:
 #' # trait 'm' (i.e. the first column in the scoring matrix): from -3 to -1
@@ -279,32 +278,32 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #'                     list(min = c(-3, -1, 1),
 #'                          max = c(-1, 1, 3)))
 #'
-#' # 10 items with 6-point response scale assuming "simultaneous" item response
+#' # 10 items with 6-point response scale assuming GPCM item response
 #' # process with items difficulties sampled from a normal distribution with
 #' # the mean of 0 and the standard deviation of 1.5 and thresholds relative
 #' # to the items difficulties sampled from a uniform distribution with
 #' # the limits of +-2
-#' sM <- make_scoring_matrix_aem(6, sequence = "simultaneous")
+#' sM <- make_scoring_matrix_aem(6, sequence = "gpcm")
 #' generate_intercepts(10, sM,
 #'                     FUNd = rnorm, argsd = list(mean = 0, sd = 1.5),
 #'                     FUNt = runif, argst = list(min = -2, max = 2))
-#' # 5 items with 6-point response scale assuming "simultaneous" item response
+#' # 5 items with 6-point response scale assuming GPCM item response
 #' # process with items difficulties sampled from a uniform distribution with
 #' # the limits of +-2 and thresholds relative to the items difficulties sampled
 #' # from a normal distribution with the mean of 0 and the standard deviation
 #' # defined individually for each item
 #' # the limits of +-2
-#' sM <- make_scoring_matrix_aem(6, sequence = "simultaneous")
+#' sM <- make_scoring_matrix_aem(6, sequence = "gpcm")
 #' generate_intercepts(5, sM,
 #'                     FUNd = runif, argsd = list(min = -2, max = 2),
 #'                     FUNt = rnorm, argst = list(mean = 0,
 #'                                                sd = c(1, 1.2, 1.4, 1.6, 1.9)))
-#' # 20 items with 5-point response scale assuming "simultaneous" item response
+#' # 20 items with 5-point response scale assuming GPCM item response
 #' # process with items difficulties sampled from a uniform distribution with
 #' # the limits of +-2 and thresholds relative to the items difficulties
 #' # generated deterministically as a sequence of 4 regularly spaced values
 #' # from 0.9 to -0.9
-#' sM <- make_scoring_matrix_aem(5, sequence = "simultaneous")
+#' sM <- make_scoring_matrix_aem(5, sequence = "gpcm")
 #' generate_intercepts(20, sM,
 #'                     FUNd = runif, argsd = list(min = -2, max = 2),
 #'                     FUNt = seq, argst = list(from = 0.9,

@@ -1,14 +1,14 @@
-#' @title Conversion between thresholds and intercepts parametrisations
+#' @title Conversion between thresholds and intercepts parametrizations
 #' @description Utility functions allowing to covert \emph{thresholds} (i.e.
-#' parameterisation convienient to think of item steps difficulty) to
-#' \emph{intercepts} (i.e. parameterisation used internally by packages
+#' parameterization convenient to think of item steps difficulty) to
+#' \emph{intercepts} (i.e. parameterization used internally by packages
 #' \emph{rstyles} and \emph{mirt}) or back forth.
-#' @param thresholds vector or matrix (thresholds in cols, items in rows) of
+#' @param thresholds a vector or matrix (thresholds in cols, items in rows) of
 #' item thresholds
-#' @param intercepts vector or matrix (intercepts in cols, items in rows) of
+#' @param intercepts a vector or matrix (intercepts in cols, items in rows) of
 #' item intercepts
 #' @seealso \code{\link{generate_intercepts}}
-#' @returns vector or matrix of thresholds or intercepts6
+#' @return a vector or matrix of thresholds or intercepts6
 #' @examples
 #' # 5 items with (general) difficulty evenly spanned between -2 and 2
 #' # and for each item thresholds eveny spanned betwenn -1.5 and 1.5 relatively

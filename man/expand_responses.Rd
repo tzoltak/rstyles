@@ -7,13 +7,13 @@
 expand_responses(responses, scoringMatrix)
 }
 \arguments{
-\item{responses}{matrix of responses with items in columns and observations
+\item{responses}{a matrix of responses with items in columns and observations
 in rows}
 
-\item{scoringMatrix}{matrix describing scoring patterns on each latent trait}
+\item{scoringMatrix}{a matrix describing scoring patterns on each latent trait}
 }
 \value{
-matrix (of integers)
+A matrix (of integers)
 }
 \description{
 Using scoring matrix provided as its second argument function

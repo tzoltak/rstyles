@@ -7,15 +7,15 @@
 generate_item_responeses_gpcm(theta, weightsMatrix, intercepts)
 }
 \arguments{
-\item{theta}{matrix of latent traits' values}
+\item{theta}{a matrix of latent traits' values}
 
-\item{weightsMatrix}{matrix of discrimination parameters (being
+\item{weightsMatrix}{a matrix of slope parameters (being
 multiplication of a design matrix by discriminations of factors)}
 
-\item{intercepts}{intercept parameters}
+\item{intercepts}{a vector of intercept parameters}
 }
 \value{
-vector of responses on item
+a vector of responses on item
 }
 \description{
 Computes probabilities of each response using (G)PCM and draws

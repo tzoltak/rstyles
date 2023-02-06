@@ -60,7 +60,7 @@ mae9rm3e2 <- matrix(c(0L, 0L, NA, 1L, 1L, NA, NA,
 test_that("", {
   expect_identical(make_scoring_matrix_aem(5, "mae"), bockenholtMAE5)
   expect_identical(make_scoring_matrix_aem(6, "aem"), bockenholtAEM6)
-  expect_identical(make_scoring_matrix_aem(5, "simultaneous"), plieninger5)
+  expect_identical(make_scoring_matrix_aem(5, "gpcm"), plieninger5)
   expect_identical(make_scoring_matrix_aem(10, "ema", nMiddle = 3,
                                            nExtreme = 2), ema10m3e2)
   expect_identical(make_scoring_matrix_aem(10, "ema", nMiddle = 3,

@@ -4,12 +4,12 @@
 #' exponentiated scale (\code{lnorm_mean}, \code{lnorm_sd}) or values of
 #' parameters on the log scale that will result in given values of parameters
 #' on the exponentiated scale (\code{find_pars_lnorm}).
-#' @param meanlog mean (expected value)of the distribution on the log scale
+#' @param meanlog mean (expected value) of the distribution on the log scale
 #' @param sdlog standard deviation of the distribution on the log scale
 #' @param m mean (expected value) of the distribution on the exponential scale
 #' @param sd standard deviation of the distribution on the exponential scale
 #' @return \code{lnorm_mean()} and \code{lnorm_sd()} return numeric vectors;
-#' \code{find_pars_lnorm()} returns named numeric vector with elements named
+#' \code{find_pars_lnorm()} returns a named numeric vector with elements named
 #' \emph{meanlog} describing means and elements named \emph{sdlog} describing
 #' standard deviations.
 #' @examples

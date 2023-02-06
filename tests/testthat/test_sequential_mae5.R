@@ -5,7 +5,7 @@ sM <- make_scoring_matrix_aem(1:5, "mae")
 slopes <- generate_slopes(nItems, sM, FUN = rlnorm, meanlog = 0, sdlog = 0.2)
 intercepts <- generate_intercepts(nItems, sM,
                                   FUNd = rnorm, argsd = list(mean = 0, sd = 1.5))
-items <- make_test(sM, slopes, intercepts, "sequential")
+items <- make_test(sM, slopes, intercepts, "irtree")
 
 # generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
@@ -31,7 +31,7 @@ estItemPars <- cbind(m = estItemPars[1:nItems, 1],
                      dm = estItemPars[1:nItems, 4],
                      da = estItemPars[(nItems + 1):(2*nItems), 4],
                      de = estItemPars[(2*nItems + 1):(3*nItems), 4])
-test_that("Item parameters of sequential M, A, E RS (with 5-point scale) recovers in estimation with reasonable MSEs.", {
+test_that("Item parameters of IRTrees M, A, E RS (with 5-point scale) recovers in estimation with reasonable MSEs.", {
   expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.02)
   expect_lt(mean((slopes[, 2] - estItemPars[, 2])^2), 0.09)
   expect_lt(mean((slopes[, 3] - estItemPars[, 3])^2), 0.05)

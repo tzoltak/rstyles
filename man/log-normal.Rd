@@ -13,7 +13,7 @@ lnorm_sd(meanlog, sdlog)
 find_pars_lnorm(m, sd)
 }
 \arguments{
-\item{meanlog}{mean (expected value)of the distribution on the log scale}
+\item{meanlog}{mean (expected value) of the distribution on the log scale}
 
 \item{sdlog}{standard deviation of the distribution on the log scale}
 
@@ -23,7 +23,7 @@ find_pars_lnorm(m, sd)
 }
 \value{
 \code{lnorm_mean()} and \code{lnorm_sd()} return numeric vectors;
-\code{find_pars_lnorm()} returns named numeric vector with elements named
+\code{find_pars_lnorm()} returns a named numeric vector with elements named
 \emph{meanlog} describing means and elements named \emph{sdlog} describing
 standard deviations.
 }

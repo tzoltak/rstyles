@@ -7,11 +7,11 @@
 make_scoring_matrix_stz(responses)
 }
 \arguments{
-\item{responses}{vector of available responses (\emph{categories}) - can be
+\item{responses}{a vector of available responses (\emph{categories}) - can be
 a character vector or positive integer describing number of responses}
 }
 \value{
-matrix of integers
+a matrix of integers
 }
 \description{
 Makes response matrix using \emph{sum to zero} approach.
