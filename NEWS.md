@@ -2,7 +2,7 @@
 
 ## New features
 
-- New functions `make_mplus_irtree_model_syntax()` and `make_mplus_gpcm_model_syntax()` enabling convenient preparing Mplus syntax specifying response-style models.
+- New functions `make_mplus_irtree_model_syntax()` and `make_mplus_gpcm_model_syntax()` enabling to conveniently prepare the Mplus syntax specifying response-style models.
 
 ## Bug fixes
 
