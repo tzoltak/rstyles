@@ -204,11 +204,12 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #'   \item{argument \code{argsd} provides arguments that will be passed to the
 #'         function provided by \code{FUNd}; elements of this list should rather
 #'         be named; each element of the list should be a vector (typically
-#'         a numeric one) with only one element or as many elements, as the
-#'         number of columns in the \code{scoringMatrix} - in this latter case
-#'         consecutive elements of (each) vector will be passed to separate
-#'         calls of the \code{FUNd} generating thresholds for respective
-#'         \emph{pseudo-items} across all the items;}
+#'         a numeric one, but can be also a list of matrices) with only one
+#'         element or as many elements, as the number of columns in the
+#'         \code{scoringMatrix} - in this latter case consecutive elements of
+#'         (each) vector will be passed to separate calls of the \code{FUNd}
+#'         generating thresholds for respective \emph{pseudo-items} across all
+#'         the items;}
 #'   \item{arguments \code{FUNt} and \code{argst} are not used.}
 #' }
 #' \strong{Assuming \emph{GPCM} response process:}
@@ -348,21 +349,21 @@ generate_intercepts <- function(nItems, scoringMatrix, FUNd, argsd = NULL,
   }
 }
 generate_intercepts_sqn <- function(nItems, scoringMatrix, FUNd, argsd) {
-  argsd <- c(list(scoringMatrix[1, ]), argsd)
-  colNames <- names(argsd)
-  argsd <- tryCatch(as.data.frame(argsd),
-                    error = function(e) {
-                      stop("Argument that will be passed to the function generating intercepts ('",
-                           paste(names(argsd), collapse = "', "),
-                           "') must be vectors of the same length as the number of columns of the matrix provided by argument `scoringMatrix` (or of the length of one).",
-                           call. = FALSE)
-                    })
-  names(argsd) <- colNames
-  argsd <- argsd[, -1L, drop = FALSE]
-  intercepts <- matrix(NA_real_, nrow = nItems, ncol = nrow(argsd))
-  colnames(intercepts) <- paste0(rownames(argsd), "1")
+  argsd <- lapply(argsd,
+                  function(x, len) {
+                    if (length(x) == 1L) x <- rep(x, len)
+                    return(x)
+                  }, len = ncol(scoringMatrix))
+  if (any(sapply(argsd, length) != ncol(scoringMatrix))) {
+    stop("Argument that will be passed to the function generating intercepts ('",
+         paste(names(argsd), collapse = "', "),
+         "') must be vectors of the same length as the number of columns of the matrix provided by argument `scoringMatrix` (or of the length of one).",
+         call. = FALSE)
+  }
+  intercepts <- matrix(NA_real_, nrow = nItems, ncol = ncol(scoringMatrix))
+  colnames(intercepts) <- paste0(colnames(scoringMatrix), "1")
   if ("n" %in% names(formals(FUNd))) {
-    argsd$n <- nItems
+    argsd$n <- rep(nItems, ncol(scoringMatrix))
   }
   badArgs <- setdiff(names(argsd), c(names(formals(FUNd)), ""))
   if (length(badArgs) > 0L & !("..." %in% names(formals(FUNd)))) {
@@ -370,8 +371,8 @@ generate_intercepts_sqn <- function(nItems, scoringMatrix, FUNd, argsd) {
          ifelse(length(badArgs) > 1L, "s", ""),
          " `", paste(badArgs, collapse = "`, `"), "`.")
   }
-  for (i in 1L:nrow(argsd)) {
-    intercepts[, i] <- do.call(FUNd, argsd[i, , drop = FALSE])
+  for (i in 1L:ncol(scoringMatrix)) {
+    intercepts[, i] <- do.call(FUNd, lapply(argsd, function(x, i) x[[i]], i = i))
   }
   return(intercepts)
 }

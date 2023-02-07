@@ -60,11 +60,12 @@ of responding process. In such a case:
   \item{argument \code{argsd} provides arguments that will be passed to the
         function provided by \code{FUNd}; elements of this list should rather
         be named; each element of the list should be a vector (typically
-        a numeric one) with only one element or as many elements, as the
-        number of columns in the \code{scoringMatrix} - in this latter case
-        consecutive elements of (each) vector will be passed to separate
-        calls of the \code{FUNd} generating thresholds for respective
-        \emph{pseudo-items} across all the items;}
+        a numeric one, but can be also a list of matrices) with only one
+        element or as many elements, as the number of columns in the
+        \code{scoringMatrix} - in this latter case consecutive elements of
+        (each) vector will be passed to separate calls of the \code{FUNd}
+        generating thresholds for respective \emph{pseudo-items} across all
+        the items;}
   \item{arguments \code{FUNt} and \code{argst} are not used.}
 }
 \strong{Assuming \emph{GPCM} response process:}

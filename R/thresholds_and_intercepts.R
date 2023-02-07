@@ -7,8 +7,15 @@
 #' item thresholds
 #' @param intercepts a vector or matrix (intercepts in cols, items in rows) of
 #' item intercepts
+#' @details Please note, that \emph{intercepts} typically are computed by
+#' transforming sums of item location parameters (\emph{difficulties}) and
+#' \emph{thresholds} defined relatively to the item location. Consequently,
+#' \emph{thresholds} returned from such \emph{intercepts} by the
+#' \code{intercepts2thresholds} will already include item location. To get
+#' \emph{thresholds} relative to item location one must subtract this values
+#' from their mean.
 #' @seealso \code{\link{generate_intercepts}}
-#' @return a vector or matrix of thresholds or intercepts6
+#' @return a vector or matrix of thresholds or intercepts
 #' @examples
 #' # 5 items with (general) difficulty evenly spanned between -2 and 2
 #' # and for each item thresholds eveny spanned betwenn -1.5 and 1.5 relatively

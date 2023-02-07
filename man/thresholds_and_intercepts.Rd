@@ -36,13 +36,22 @@ item thresholds}
 item intercepts}
 }
 \value{
-a vector or matrix of thresholds or intercepts6
+a vector or matrix of thresholds or intercepts
 }
 \description{
 Utility functions allowing to covert \emph{thresholds} (i.e.
 parameterization convenient to think of item steps difficulty) to
 \emph{intercepts} (i.e. parameterization used internally by packages
 \emph{rstyles} and \emph{mirt}) or back forth.
+}
+\details{
+Please note, that \emph{intercepts} typically are computed by
+transforming sums of item location parameters (\emph{difficulties}) and
+\emph{thresholds} defined relatively to the item location. Consequently,
+\emph{thresholds} returned from such \emph{intercepts} by the
+\code{intercepts2thresholds} will already include item location. To get
+\emph{thresholds} relative to item location one must subtract this values
+from their mean.
 }
 \examples{
 # 5 items with (general) difficulty evenly spanned between -2 and 2

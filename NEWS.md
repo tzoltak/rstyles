@@ -1,3 +1,9 @@
+# rstyles 0.7.1 (7.02.2023)
+
+## Bug fixes
+
+- `generate_intercepts_sqn()` and thus `generate_intercepts()` accepts `argsd` containing elements that are not atomic vectors, e.g. list of matrices.
+
 # rstyles 0.7.0 (6.02.2023)
 
 ## New features
