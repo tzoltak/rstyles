@@ -2,26 +2,26 @@
 #' @description Function makes a list object representing test items given
 #' matrices of slopes and intercepts/thresholds parameters. Result may be used
 #' within a call to \code{\link{generate_test_responses}}.
-#' @param scoringMatrix \emph{scoring matrix} that should be used for items,
+#' @param scoringMatrix a \emph{scoring matrix} that should be used for items,
 #' especially one generated with \code{\link{make_scoring_matrix_aem}}
-#' @param slopes matrix of slope parameters (items in rows, traits in cols),
+#' @param slopes a matrix of slope parameters (items in rows, traits in cols),
 #' especially generated with \code{\link{generate_slopes}}
-#' @param intercepts matrix of intercept parameters (items in rows,
+#' @param intercepts a matrix of intercept parameters (items in rows,
 #' intercepts/thresholds in cols), especially generated with
 #' \code{\link{generate_intercepts}}
-#' @param mode a way the item should be answered - see
+#' @param mode the way the item should be answered - see
 #' \code{\link{generate_item_responses_sqn}},
 #' \code{\link{generate_item_responses_sml}}
-#' @param scoringOnPreviousResponses optional function returning a column vector
-#' that will be put before first column of the \code{scoringMatrix}
-#' @param editResponse only if \code{mode='sequential'}: optional function
+#' @param scoringOnPreviousResponses an optional function returning a column
+#' vector that will be put before first column of the \code{scoringMatrix}
+#' @param editResponse only if \code{mode='irtree'}: an optional function
 #' returning scoring matrix that should replace that provided by
 #' \code{scoringMatrix} after \emph{response is made} at the first \emph{node};
 #' this should be function accepting two arguments: \code{response} - generated
 #' response (by the model described with the first column of the
 #' \code{scoringMatrix}) that is supposed to be \emph{edited} and
 #' \code{scoringMatrix} - current scoring matrix (to be replaced)
-#' @param names optional character vector providing names of the items (by
+#' @param names an optional character vector providing names of the items (by
 #' default names will be created as concatenation of the letter "i" - like
 #' "item" - and consecutive integers)
 #' @details Function is actually a simple wrapper around \code{\link{make_item}}
@@ -30,11 +30,11 @@
 #' \strong{Column names of the \code{intercepts} matrix:}
 #'
 #' \itemize{
-#'   \item{If \code{mode = "simultaneous"} names should be of the form:
+#'   \item{If \code{mode = "gpcm"} names should be of the form:
 #'         \emph{dN} where \emph{d} stands for itself and \emph{N} are
 #'         consecutive integers from 1 to one less than the number of rows of
 #'         the the \emph{scoring matrix}.}
-#'   \item{If \code{mode = "sequential"} names should be of the form:
+#'   \item{If \code{mode = "irtree"} names should be of the form:
 #'         \emph{traitN} where \emph{trait} are names of traits - the same as
 #'         those in columns of the \emph{scoring matrix} - and \emph{N} are
 #'         integers describing consecutive thresholds of a \emph{pseudo-item}
@@ -44,11 +44,11 @@
 #'         by the number of columns less by one than the number of possible
 #'         responses, with \emph{N} being consecutive integers.}
 #' }
-#' @returns List of objects of the \emph{rstylesItem} class.
+#' @return A list of objects of the \emph{rstylesItem} class.
 #' @examples
 #' ################################################################################
 #' # responses to 10 items using 5-point Likert scale
-#' # with respect to the Bockenholt's IRTree (i.e. "sequential") "MAE" model
+#' # with respect to the Bockenholt's IRTree "MAE" model
 #' # 1) make scoring matrix
 #' sM <- make_scoring_matrix_aem(5, "mae")
 #' # 2) generate items' slopes:
@@ -68,14 +68,14 @@
 #'                                   list(min = -1.5,
 #'                                        max = 1.5))
 #' # 4) call `make_test()`
-#' # (for IRTree mode must be set to "sequential")
-#' test <- make_test(sM, slopes, intercepts, "sequential")
+#' # (for IRTree mode must be set accordingly)
+#' test <- make_test(sM, slopes, intercepts, "irtree")
 #'
 #' ################################################################################
 #' # responses to 20 items using 5-point Likert scale
-#' # with respect to the Plieninger's "simultaneous" (partialy-compensatory) model
+#' # with respect to the Plieninger's GPCM (partialy-compensatory) model
 #' # 1) make scoring matrix
-#' sM <- make_scoring_matrix_aem(5, "simultaneous")
+#' sM <- make_scoring_matrix_aem(5, "gpcm")
 #' # 2) generate items' slopes:
 #' # slopes on the 'middle", "extreme" and "acquiescence" latent traits
 #' # set to 1 for all items and slopes on the "intensity" latent trait generated
@@ -93,10 +93,10 @@
 #'                                   argsd = list(mean = 0, sd = 1.5),
 #'                                   argst = list(min = -1, max = 1))
 #' # 4) call `make_test()`
-#' test <- make_test(sM, slopes, intercepts, "simultaneous")
+#' test <- make_test(sM, slopes, intercepts, "gpcm")
 #' @export
 make_test <- function(scoringMatrix, slopes, intercepts,
-                      mode = c('sequential', 'simultaneous'),
+                      mode = c('irtree', 'gpcm'),
                       scoringOnPreviousResponses = NULL, editResponse = NULL,
                       names = paste0("i", 1:nrow(slopes))) {
   # make_item() performs detailed assertions, so here there are only the basic ones

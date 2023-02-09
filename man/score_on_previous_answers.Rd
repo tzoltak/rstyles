@@ -16,14 +16,14 @@ score_on_last_answer_previous(previousResponses, scoringMatrix)
 score_on_previous_answers_bounce(previousResponses, scoringMatrix)
 }
 \arguments{
-\item{previousResponses}{character vector of previous responses}
+\item{previousResponses}{a character vector of previous responses}
 
-\item{scoringMatrix}{matrix describing how responses (described in rownames
+\item{scoringMatrix}{a matrix describing how responses (described in rownames
 of the matrix) map on \emph{scores} of latent traits (described in columns of
 the matrix)}
 }
 \value{
-one-column matrix of 0 and 1 with the same number of rows
+a one-column matrix of 0 and 1 with the same number of rows
 (and rownames) as \code{scoringMatrix} with column name \emph{ci}
 }
 \description{
@@ -49,7 +49,7 @@ in a form of creating various \emph{graphical patterns} of responses:
 }
 }
 \examples{
-sM <- make_scoring_matrix_aem(1:5, "simultaneous")
+sM <- make_scoring_matrix_aem(1:5, "gpcm")
 
 
 answersStraigth <- t(sapply(c(1:5, rep(3, 5)), score_on_last_answer_straight,

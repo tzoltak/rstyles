@@ -3,10 +3,10 @@
 #' trait (represented in columns) affects (or not) chances to choose each
 #' response category (represented in rows) assuming effects of
 #' \emph{acquiescence}, \emph{extreme} and \emph{middle} response styles.
-#' @param responses vector of available responses (\emph{categories}) - can be
+#' @param responses a vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
-#' @param sequence text: "simultaneous" or a three-letters sequence describing
-#' the order of decisions made by a \emph{respondent}:
+#' @param sequence a string: "gpcm" or a three-letters sequence describing
+#' the order of nodes in the IRTree:
 #' \itemize{
 #'   \item{'m' stands for choosing between middle \emph{category} and some other
 #'         \emph{category}}
@@ -16,19 +16,23 @@
 #'   \item{'e' stands for choosing between \emph{extreme} category and some
 #'         other \emph{category}}
 #' }
-#' @param nMiddle (maximum) number of \emph{middle} \emph{categories}
-#' @param nExtreme (half of the) number of \emph{extreme} \emph{categories}
-#' @param nAcquiescence number of \emph{acquiescence} \emph{categories}
-#' @param reversed logical value - is item a reversed one? (see details)
+#' @param nMiddle the (maximum) number of \emph{middle} \emph{categories}
+#' @param nExtreme (half of) the number of \emph{extreme} \emph{categories}
+#' @param nAcquiescence the number of \emph{acquiescence} \emph{categories}
+#' @param reversed a logical value - is item a reversed one? (see details)
 #' @param aType determines a way in which scoring pattern for acquiescence is
 #' generated when it appears in different branches of the IRTree (whether to
 #' create separate columns allowing for different discrimination of the
 #' acquiescence in different nodes of the tree or to create only a single column
 #' holding discrimination in different nodes of the tree constant)
 #' @param iType determines a way in which scoring pattern for additional (see
-#' the description of the `aType` parameter above)
-#' \emph{intensity} trait will be generated (see details)
-#' @details \strong{\code{sequence} other than "simultaneous":}
+#' the description of the `aType` parameter above) \emph{intensity} trait will
+#' be generated (see details)
+#' @details \strong{\code{sequence} other than "gpcm":}
+#'
+#' For important remarks on the possibilities and limitations of interpretation
+#' of IRTree models, that are represented by this type of scoring matrices,
+#' see Plieninger (2020).
 #'
 #' For number of responses between 5 and 6 function generates scoring
 #' matrix in a way mimicking Böckenholt's approach (2017) to describe
@@ -65,17 +69,17 @@
 #' Analogously to \emph{acquiescence} trait these columns can be collapsed into
 #' one by setting \code{iType = "common"}.
 #'
-#' \strong{\code{sequence} is "simultaneous":}
+#' \strong{\code{sequence} is "gpcm":}
 #'
 #' In this case a GPCM scoring matrix is generated mimicking approach of
 #' Plieninger (2016), i.e. assuming that response process is
-#' a \emph{simultaneous} and four factors: intensity of the trait that
+#' a \emph{gpcm} and four factors: intensity of the trait that
 #' is \strong{not} a response style (column \emph{i}), tendency to choose middle
 #' \emph{categories} (column \emph{m}) tendency to choose extreme
 #' \emph{categories} (column \emph{e}) and tendency to choose acquiescence
 #' \emph{categories} (column \emph{a}) contribute altogether to propensity
 #' of choosing each response.
-#' @return matrix of integers
+#' @return a matrix of integers
 #' @examples
 #' # Bockenholt 2017: 73
 #' (bockenholtMAE5 <- make_scoring_matrix_aem(5, "mae"))
@@ -84,8 +88,8 @@
 #' # Bockenholt 2017: 77
 #' (bockenholtAEM6 <- make_scoring_matrix_aem(6, "aem"))
 #' # Plieninger 2016: 39
-#' (plieninger5 <- make_scoring_matrix_aem(5, "simultaneous"))
-#' (plieninger5r <- make_scoring_matrix_aem(5, "simultaneous", reversed = TRUE))
+#' (plieninger5 <- make_scoring_matrix_aem(5, "gpcm"))
+#' (plieninger5r <- make_scoring_matrix_aem(5, "gpcm", reversed = TRUE))
 #'
 #' # some more complicated cases:
 #' make_scoring_matrix_aem(10, "ema", nMiddle = 3, nExtreme = 2)
@@ -94,12 +98,12 @@
 #' make_scoring_matrix_aem(9, "mae", nMiddle = 3, nExtreme = 2, reversed = TRUE)
 #' @export
 make_scoring_matrix_aem <- function(
-  responses, sequence = c("mae", "mea", "aem", "ame", "ema", "eam",
-                          "simultaneous"),
+  responses, sequence = c("mae", "mea", "aem", "ame", "ema", "eam", "gpcm"),
   nMiddle = 2L, nExtreme = 1L, nAcquiescence = floor(length(responses) / 2),
   reversed = FALSE,
   aType = c("separate", "common"), iType = c("separate", "common"))
 {
+  if (sequence == "simultaneous") sequence <- "gpcm"
   sequence = match.arg(sequence)
   aType = match.arg(aType)
   iType = match.arg(iType)
@@ -151,7 +155,7 @@ make_scoring_matrix_aem <- function(
             "Number of responses that is supposed to be acquiescence (`nAcquiescence`) must be no more than a half of number of available responses." =
               nAcquiescence <= floor(length(responses) / 2))
 
-  if (sequence == "simultaneous") {
+  if (sequence == "gpcm") {
     colNames <- c("i", "m", "e", "a")
   } else {
     colNames <- c(strsplit(sequence, "")[[1L]], "i")
@@ -173,7 +177,7 @@ make_scoring_matrix_aem <- function(
                  rep(1L, nExtreme)),
                ncol = 1, dimnames = list(responses, "e"))
     } else if (names(scoringSubMatrices)[i] == "a") {
-      if (sequence != "simultaneous" && aType == "separate" && i > 1L) {
+      if (sequence != "gpcm" && aType == "separate" && i > 1L) {
         scoringMatrix <- cbind(scoringSubMatrices[[1]],
                                scoringSubMatrices[[2]],
                                scoringSubMatrices[[3]],
@@ -205,7 +209,7 @@ make_scoring_matrix_aem <- function(
                    rep(1L, nAcquiescence)),
                  ncol = 1, dimnames = list(responses, "a"))
       }
-    } else if (sequence == "simultaneous") {
+    } else if (sequence == "gpcm") {
       scoringSubMatrices[[i]] <-
         matrix(sort(0L:(length(responses) - 1), decreasing = reversed),
                ncol = 1, dimnames = list(responses, "i"))
@@ -242,7 +246,7 @@ make_scoring_matrix_aem <- function(
                          scoringSubMatrices[[2]],
                          scoringSubMatrices[[3]],
                          scoringSubMatrices[[4]])
-  if (sequence != "simultaneous") {
+  if (sequence != "gpcm") {
     # inserting NAs in rows that describe paths that ends up earlier
     for (i in 1L:(ncol(scoringMatrix) - 1L)) {
       patterns <- scoringMatrix[!duplicated(scoringMatrix[, 1L:i]), 1L:i,
@@ -273,12 +277,13 @@ make_scoring_matrix_aem <- function(
 #' one wants to use \code{\link{generate_slopes}} and
 #' \code{\link{generate_intercepts}} functions to generate items' parameters
 #' with no reference to response styles.
-#' @param responses vector of available responses (\emph{categories}) - can be
+#' @param responses a vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
-#' @param nTraits optionally number of traits affecting the item response;
+#' @param nTraits optionally the number of traits affecting the item response;
 #' disregarded if \code{traitsNames} are provided
-#' @param traitsNames optionally character vector containing names of the traits
-#' @return matrix of integers
+#' @param traitsNames optionally a character vector containing names of the
+#' traits
+#' @return a matrix of integers
 #' @examples
 #' make_scoring_matrix_trivial(5, 2)
 #' make_scoring_matrix_trivial(5, traitsNames = c("A", "B"))
@@ -313,11 +318,11 @@ make_scoring_matrix_trivial <- function(responses, nTraits = 1L,
 }
 #' @title Make scoring matrix
 #' @description Makes response matrix using \emph{random thresholds} approach.
-#' @param responses vector of available responses (\emph{categories}) - can be
+#' @param responses a vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
 #' @details Be aware that while using this kind of response matrix latent
 #' traits must be set orthogonal to assure model identifiability.
-#' @return matrix of integers
+#' @return a matrix of integers
 #' @examples
 #' make_scoring_matrix_rt(5)
 #' @export
@@ -335,9 +340,9 @@ make_scoring_matrix_rt <- function(responses) {
 }
 #' @title Make scoring matrix
 #' @description Makes response matrix using \emph{sum to zero} approach.
-#' @param responses vector of available responses (\emph{categories}) - can be
+#' @param responses a vector of available responses (\emph{categories}) - can be
 #' a character vector or positive integer describing number of responses
-#' @return matrix of integers
+#' @return a matrix of integers
 #' @examples
 #' make_scoring_matrix_stz(5)
 #' @export

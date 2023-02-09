@@ -5,7 +5,7 @@ sM <- make_scoring_matrix_aem(1:6, "mae")
 slopes <- generate_slopes(nItems, sM, FUN = rlnorm, meanlog = 0, sdlog = 0.2)
 intercepts <- generate_intercepts(nItems, sM,
                                   FUNd = rnorm, argsd = list(mean = 0, sd = 1.5))
-items <- make_test(sM, slopes, intercepts, "sequential")
+items <- make_test(sM, slopes, intercepts, "irtree")
 
 # generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = 3, ncol = 3,

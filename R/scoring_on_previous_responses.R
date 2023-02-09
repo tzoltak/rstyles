@@ -19,14 +19,14 @@
 #'         responses; if there are no more answers \emph{in a given direction},
 #'         than change direction (\emph{bounce}).}
 #' }
-#' @param previousResponses character vector of previous responses
-#' @param scoringMatrix matrix describing how responses (described in rownames
+#' @param previousResponses a character vector of previous responses
+#' @param scoringMatrix a matrix describing how responses (described in rownames
 #' of the matrix) map on \emph{scores} of latent traits (described in columns of
 #' the matrix)
-#' @returns one-column matrix of 0 and 1 with the same number of rows
+#' @return a one-column matrix of 0 and 1 with the same number of rows
 #' (and rownames) as \code{scoringMatrix} with column name \emph{ci}
 #' @examples
-#' sM <- make_scoring_matrix_aem(1:5, "simultaneous")
+#' sM <- make_scoring_matrix_aem(1:5, "gpcm")
 #'
 #'
 #' answersStraigth <- t(sapply(c(1:5, rep(3, 5)), score_on_last_answer_straight,

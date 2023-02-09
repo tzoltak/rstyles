@@ -4,15 +4,17 @@
 
 Package *rstyles* provides functions that enables performing simulations involving IRT/CCFA models that assume responses to be affected by so-called *response styles*. It includes functions to generate (randomly or deterministically) items' parameters and to generate responses.
 
+Also (since version 0.7.0) it provides functions that prepare [Mplus](http://statmodel.com/) model syntaxes for IRT/CCFA models involving responses styles.
+
 # Installing the package
 
-The latest version of the package can be installed from GitHub using package `devtools`:
+The latest version of the package can be installed from GitHub using package `remotes`:
 
 ```{r}
-devtools::install.github("tzoltak/rstyles")
+remotes::install.github("tzoltak/rstyles")
 ```
 
-# How to use the package
+# How to use the package - simulating responses
 
 ## General description
 
@@ -22,8 +24,8 @@ There are four steps one needs to follow to simulate responses to a test:
 
     -   Within package *rstyles* model of answering an item is described on the most general level using so-called *scoring matrix*, i.e. a matrix that describes how different latent traits contribute to propensity of choosing a given category (answer). Names of columns of the *scoring matrix* corresponds to the names of latent traits in the model and names of rows to available response categories for each item. The same form of representation is used to describe two quite different types of models:
 
-        -   noncompensatory IRTree models (Böckenholt, 2012, 2017) in which responding process is assumed to be a sequence of (typically binary, but this is not the only possible approach) decisions and in each of these decisions only one latent trait is involved; this type of models can be estimated by means of defining so-called *pseudo-items* - each of them describing such a single decision made by respondent (compare function `expand_responses()`); in the package *rstyles* this approach is identified as a *sequential mode* of responding;
-        -   partially-compensatory models (Falk & Cai, 2016; Henninger & Meiser, 2020a, 2020b; Plieninger, 2017) in which latent traits are supposed to describe the specific way of perceiving the response scale by the respondent and may be thought as affecting the response process *simultaneously* (contrary to the IRTree approach), typically along with an additional latent trait that describes *what the test (scale) is supposed to measure* (i.e. not a response style); in the package *rstyles* this approach is identified as a *simultaneous mode* of responding.
+        -   noncompensatory IRTree models (Böckenholt, 2012, 2017) in which responding process is assumed to be a sequence of (typically binary, but this is not the only possible approach) decisions and in each of these decisions only one latent trait is involved; this type of models can be estimated by means of defining so-called *pseudo-items* - each of them describing such a single decision made by respondent (compare function `expand_responses()`); in the package *rstyles* this approach is identified as a *irtree mode* of responding;
+        -   partially-compensatory models (Falk & Cai, 2016; Henninger & Meiser, 2020a, 2020b; Plieninger, 2017) in which latent traits are supposed to describe the specific way of perceiving the response scale by the respondent and may be thought as affecting the response process *simultaneously* (contrary to the IRTree approach), typically along with an additional latent trait that describes *what the test (scale) is supposed to measure* (i.e. not a response style); in the package *rstyles* this approach is identified as a *GPCM mode* of responding.
 
     -   Although *scoring matrix* used to describe this both approaches within the package *rstyles* looks quite the same, it is used in a different way internally in the response generating step - that's why one needs to declare the *mode* of responding while defining items in the second step of the procedure.
 
@@ -78,7 +80,7 @@ sM <- make_scoring_matrix_aem(1:5, "mae")
 slopes <- generate_slopes(nItems, sM, FUN = rlnorm, meanlog = 0, sdlog = 0.2)
 intercepts <- generate_intercepts(nItems, sM,
                                   FUNd = rnorm, argsd = list(mean = 0, sd = 1.5))
-items <- make_test(sM, slopes, intercepts, "sequential")
+items <- make_test(sM, slopes, intercepts, "irtree")
 
 # generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
@@ -101,12 +103,12 @@ mSqt <- mirt(respWide,
 
 ### Partially-compensatory random-thresholds GPCM including *middle*, *extreme* and *acquiescence* response styles
 
--   Below the model is defined in which apart of the *trait the test is supposed to measure*, named "i", there are three additional latent traits describing response styles that affect responses *simultaneously*. This traits may be interpreted as describing *middle* ("m"), *extreme* ("e") and *acquiescence* ("a") response styles.
+-   Below the model is defined in which apart of the *trait the test is supposed to measure*, named "i", there are three additional latent traits describing response styles that affect responses. This traits may be interpreted as describing *middle* ("m"), *extreme* ("e") and *acquiescence* ("a") response styles.
 -   Test consist of 20 items, half of which is *reversed* (i.e. *negatively* associated with the trait called "i").
 -   Items' *slopes* are generated from a log-normal distribution with expected value and standard deviation on the log scale being 0 and 0.2 respectively.
 -   Items' *intercepts* (*thresholds*) in a two-step procedure in which firstly (*general* or, technically speaking, average) *difficulties* of the items are generated (precisely these are *ease* parameters due to the parameterization that is used by the package) and next *thresholds* are generated relatively to these items' *difficulties*. At the end this both are summed up to get actual *intercepts*. In the code below:
-    - Items' *difficulties* are sampled from a uniform distribution ranging from -2 to 2.
-    - *Thresholds* relative to the item's difficulty are generated deterministically as a sequence of four values regularly spanned between 0.9 and -0.9.
+    -   Items' *difficulties* are sampled from a uniform distribution ranging from -2 to 2.
+    -   *Thresholds* relative to the item's difficulty are generated deterministically as a sequence of four values regularly spanned between 0.9 and -0.9.
 -   Latent traits are assumed to be standard normal and independent of each other (this is not a very plausible assumption).
 -   There are 1000 *respondents* (responses that are generated).
 -   Function `mirt()` from package *mirt* is used to estimate 2PL IRT model on the generated data, with a custom *scoring matrix* provided using `gpcm_mats` argument.
@@ -120,7 +122,7 @@ require(mirt)
 set.seed(123456)
 # generating test
 nItems <- 20
-sM <- make_scoring_matrix_aem(1:5, "simultaneous")
+sM <- make_scoring_matrix_aem(1:5, "gpcm")
 slopes <- cbind(generate_slopes(nItems, sM[, 1L, drop = FALSE],
                                 FUN = rlnorm, meanlog = 0, sdlog = 0.3,
                                 nReversed = floor(nItems / 2)),
@@ -130,7 +132,7 @@ intercepts <- generate_intercepts(nItems, sM,
                                   FUNt = seq, argst = list(from = 0.9,
                                                            to = -0.9,
                                                            length.out = 4))
-items <- make_test(sM, slopes, intercepts, "simultaneous")
+items <- make_test(sM, slopes, intercepts, "gpcm")
 
 # generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),
@@ -165,8 +167,8 @@ Also, it is possible to specify distinct *scoring matrices* for the *reversed* a
 
 Log-normal distribution is parameterized on the log scale (i.e. by parameters of the *underlying* normal distribution) but while generating parameters one is always interested in the parameters on the *exponential* scale, i.e. the scale of the sampled values. To deal with this problem package *rstyles* provides a set of functions:
 
-- `lnorm_mean()` and `lnorm_sd()` enables to compute respectively expected value and standard deviation of the log-normal distribution with a given *meanlog* and *sdlog* parameters (compare `?rlnorm`);
-- `find_pars_lnorm()` returns values of the *meanlog* and *sdlog* parameters one should use to get expected value and standard deviation of the log-normal distribution specified as arguments to this function.
+-   `lnorm_mean()` and `lnorm_sd()` enables to compute respectively expected value and standard deviation of the log-normal distribution with a given *meanlog* and *sdlog* parameters (compare `?rlnorm`);
+-   `find_pars_lnorm()` returns values of the *meanlog* and *sdlog* parameters one should use to get expected value and standard deviation of the log-normal distribution specified as arguments to this function.
 
 ### Mixtures
 
@@ -187,13 +189,57 @@ respSimdata <- simdata(slopes, intercepts, N = nrow(theta), itemtype = "gpcm",
 
 However, remember that `simdata()` always returns responses as numbers starting from 0 (the first category), irrespective the scoring matrix you provide it.
 
+# How to use the package - generating Mplus syntaxes
+
+There are two functions enabling to prepare [Mplus](http://statmodel.com/) model syntaxes:
+
+-   `make_mplus_irtree_model_syntax()` for IRTree models,
+-   `make_mplus_gpcm_model_syntax()` for (G)PCM/NRM models.
+
+They share the common API and enable for:
+
+-   Using custom scoring matrices.
+-   Using *reverse coded* items.
+-   Using models with between-items multidimensionality (i.e. some traits loading only some sets of items).
+-   Fixing or freeing slope parameters across items for each latent trait individually.
+-   Setting some latent traits orthogonal to each other.
+-   Including observed exogenous predictors and observed dependent variables in the model (predicting or being predicted by the latent traits).
+-   **Using data in which some response categories are *empty*** (no one chose them) for some items.
+-   Using sampling weights.
+
+Both functions return a list that one can use along with the `mpluObject()` function from the [*MplusAutomation*](https://cran.r-project.org/package=MplusAutomation) package in the way:
+
+-   `do.call(mplusObject, args = make_mplus_irtree_model_syntax())`
+
+-   or `do.call(mplusObject, args = make_mplus_gpcm_model_syntax()`
+
+to get a ready-to-be-estimated Mplus model object. See [*MplusAutomation* package vignette](https://cran.r-project.org/web/packages/MplusAutomation/vignettes/vignette.html) for more information on calling Mplus from R.
+
+Models are identified by either:
+
+-   Freeing item slopes and fixing latent trait variance to 0, if slopes are enabled to vary across items for a given latent trait.
+-   Fixing item slopes to 1 (times weights in the scoring matrix) and freeing latent trait variance, if slopes are constrained to be the same across items for a given latent variable.
+
+However, their important limitations are:
+
+-   Only one scoring matrix is used for every item (with the exception of handling *reverse coded* items).
+-   Due to the way Mplus deals with NRM identification scoring matrices including non-zero values in their last row (that is, mostly all typically used) must be reparameterized what affects (see `?make_mplus_gpcm_vmmc_syntax` for a little more information):
+    -   Sign of the estimated slope parameters.
+    -   Values of the intercept parameters.
+
+## Reading Mplus results
+
+There is also function `read_mplus_object_results()` available in the package that transforms results stored in the estimated `mplusObject` to a list in which different types of model parameters are separated into different data frames, and some data cleaning has been applied.
+
 # To do
 
--   functions to compute non-GPCM (2PLM) models at nodes of *sequentially* responded items;
+-   functions to compute non-GPCM (2PLM) models at nodes of *IRTree* responded items;
 
 -   functions to use as `editResponse` argument to `make_item()`;
 
--   implementation of Plieninger & Heck (2018) generalized IRTree approach (large refactorization will be needed because this kind of models can't be described by a simple *scoring matrix*);
+# Limitations
+
+Current implementation can not handle Plieninger & Heck's (2018) generalized IRTree approach because this kind of models can not be described by a simple *scoring matrix*.
 
 # Other useful packages and repositories
 
@@ -227,17 +273,17 @@ However, remember that `simdata()` always returns responses as numbers starting 
 
 # Literature
 
-Böckenholt, U. (2012). Modeling multiple response processes in judgment and choice. Psychological Methods, 17(4), 665–678. <https://doi.org/10.1037/a0028111>
+Böckenholt, U. (2012). Modeling multiple response processes in judgment and choice. Psychological Methods, 17(4), 665--678. <https://doi.org/10.1037/a0028111>
 
-Böckenholt, U. (2017). Measuring response styles in Likert items. *Psychological Methods, 22*(1), 69–83. <https://doi.org/10.1037/met0000106>
+Böckenholt, U. (2017). Measuring response styles in Likert items. *Psychological Methods, 22*(1), 69--83. <https://doi.org/10.1037/met0000106>
 
-Falk, C. F., & Cai, L. (2016). A flexible full-information approach to the modeling of response styles. *Psychological Methods, 21*(3), 328–347. <https://doi.org/10.1037/met0000059>
+Falk, C. F., & Cai, L. (2016). A flexible full-information approach to the modeling of response styles. *Psychological Methods, 21*(3), 328--347. <https://doi.org/10.1037/met0000059>
 
-Henninger, M., & Meiser, T. (2020). Different approaches to modeling response styles in divide-by-total item response theory models (part 1): A model integration. *Psychological Methods, 25*(5), 560–576. <https://doi.org/10.1037/met0000249>
+Henninger, M., & Meiser, T. (2020). Different approaches to modeling response styles in divide-by-total item response theory models (part 1): A model integration. *Psychological Methods, 25*(5), 560--576. <https://doi.org/10.1037/met0000249>
 
-Henninger, M., & Meiser, T. (2020). Different approaches to modeling response styles in divide-by-total item response theory models (part 2): Applications and novel extensions. *Psychological Methods, 25*(5), 577–595. <https://doi.org/10.1037/met0000268>
+Henninger, M., & Meiser, T. (2020). Different approaches to modeling response styles in divide-by-total item response theory models (part 2): Applications and novel extensions. *Psychological Methods, 25*(5), 577--595. <https://doi.org/10.1037/met0000268>
 
-Plieninger, H. (2017). Mountain or Molehill? A Simulation Study on the Impact of Response Styles. *Educational and Psychological Measurement, 77*(1), 32–53. <https://doi.org/10.1177/0013164416636655>
+Plieninger, H. (2017). Mountain or Molehill? A Simulation Study on the Impact of Response Styles. *Educational and Psychological Measurement, 77*(1), 32--53. <https://doi.org/10.1177/0013164416636655>
 
 Plieninger, H. & Heck, D.W. (2018). A New Model for Acquiescence at the Interface of Psychometrics and Cognitive Psychology. *Multivariate Behavioral Research, 53*(5), 633-654, <https://doi.org/10.1080/00273171.2018.1469966>
 

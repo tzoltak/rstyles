@@ -1,7 +1,7 @@
 set.seed(10122020)
 # generating test
 nItems <- 20
-sM <- make_scoring_matrix_aem(1:5, "simultaneous")
+sM <- make_scoring_matrix_aem(1:5, "gpcm")
 slopes <- cbind(generate_slopes(nItems, sM[, 1L, drop = FALSE],
                                 FUN = rlnorm, meanlog = 0, sdlog = 0.3,
                                 nReversed = floor(nItems / 2)),
@@ -11,7 +11,7 @@ intercepts <- generate_intercepts(nItems, sM,
                                   FUNt = seq, argst = list(from = 0.9,
                                                            to = -0.9,
                                                            length.out = 4))
-items <- make_test(sM, slopes, intercepts, "simultaneous")
+items <- make_test(sM, slopes, intercepts, "gpcm")
 
 # generating "subjects" - uncorrelated traits
 vcovTraits <- matrix(0, nrow = ncol(sM), ncol = ncol(sM),

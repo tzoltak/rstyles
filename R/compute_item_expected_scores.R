@@ -3,16 +3,16 @@
 #' item object constructed using \code{\link{make_item}} or test (i.e. list of
 #' items) object constructed using \code{\link{make_test}} and covariance matrix
 #' of latent traits, assuming multivariate-normal distribution of latent traits.
-#' @param x object of class \emph{rstylesItem} or \emph{rstylesTest}
-#' @param vcov covariance matrix of latent traits (in line with item's scoring
+#' @param x an object of class \emph{rstylesItem} or \emph{rstylesTest}
+#' @param vcov a covariance matrix of latent traits (in line with item's scoring
 #' matrix); if not provided uncorrelated standard normal is used
-#' @returns table
+#' @return A table
 #' @seealso \code{\link{make_item}}
 #' @examples
-#' itemGPCM <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "simultaneous")[, -4],
+#' itemGPCM <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "gpcm")[, -4],
 #'                       slopes = c(i = 1, m = 2, e = 3),
 #'                       intercepts = cumsum(c(0, seq(-0.5, 0.5, length.out = 4))),
-#'                       mode = "simultaneous")
+#'                       mode = "gpcm")
 #' vcov <- matrix(c( 1,    0.5, -0.5,
 #'                   0.5,  1,   -0.25,
 #'                  -0.5, -0.25, 1),
@@ -23,13 +23,13 @@
 #' itemIRTree <- make_item(scoringMatrix = make_scoring_matrix_aem(1:5, "mae"),
 #'                         slopes = c(m = 1, a = 1, e = 1),
 #'                         intercepts = c(m1 = 0, a1 = 0, e1 = 0),
-#'                         mode = "sequential")
+#'                         mode = "irtree")
 #' vcovIRTree <- vcov
 #' colnames(vcovIRTree) <- rownames(vcovIRTree) <- c("a", "m", "e")
 #' compute_item_expected_scores(itemIRTree) # orthogonal, standard-normal latent traits
 #' compute_item_expected_scores(itemIRTree, vcovIRTree)
 #'
-#' sM <- make_scoring_matrix_aem(1:5, "simultaneous")[, -4]
+#' sM <- make_scoring_matrix_aem(1:5, "gpcm")[, -4]
 #' test <- make_test(sM,
 #'                   generate_slopes(11, sM, c(1, 2, 3)),
 #'                   generate_intercepts(11, sM,
@@ -39,7 +39,7 @@
 #'                                       FUNt = seq,
 #'                                       argst = list(from = -1.5, to = 1.5,
 #'                                       length.out = 4)),
-#'                   "simultaneous")
+#'                   "gpcm")
 #' sapply(compute_item_expected_scores(test, vcov), identity)
 #' @name compute_item_expected_scores
 #' @export
@@ -100,7 +100,7 @@ compute_item_expected_scores.rstylesItem <- function(x,
   w <- mvtnorm::dmvnorm(theta, sigma = vcov)
   w <- w / sum(w)
 
-  if (x$mode == "simultaneous") {
+  if (x$mode == "gpcm") {
     x$slopes <- x$slopes[sapply(colnames(x$scoringMatrix), match,
                                 table = names(x$slopes)), drop = FALSE]
     probs <- compute_item_expected_scores_gpcm(
@@ -108,7 +108,7 @@ compute_item_expected_scores.rstylesItem <- function(x,
       x$scoringMatrix * rep(x$slopes,
                             each = nrow(x$scoringMatrix)),
       x$intercepts)
-  } else if (x$mode == "sequential") {
+  } else if (x$mode == "irtree") {
     nodes <- vector(mode = "list", length = ncol(x$scoringMatrix))
     names(nodes) <- colnames(x$scoringMatrix)
     for (i in 1L:length(nodes)) {
@@ -119,7 +119,7 @@ compute_item_expected_scores.rstylesItem <- function(x,
         x$slopes[which(names(x$slopes) == names(nodes)[i])],
         x$intercepts[grep(paste0("^", names(nodes)[i],
                                  "_?[[:digit:]]+"), names(x$intercepts))],
-        "simultaneous")
+        "gpcm")
       nodes[[i]] <- compute_item_expected_scores_gpcm(
         theta[, names(nodes)[i], drop = FALSE],
         nodes[[i]]$scoringMatrix * rep(nodes[[i]]$slopes,

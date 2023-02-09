@@ -14,30 +14,30 @@ generate_intercepts(
 )
 }
 \arguments{
-\item{nItems}{number of items for which intercepts will be generated}
+\item{nItems}{the number of items for which intercepts will be generated}
 
-\item{scoringMatrix}{\emph{scoring matrix} that will be used for the
+\item{scoringMatrix}{a \emph{scoring matrix} that will be used for the
 generated items, specifically generated with
 \code{\link{make_scoring_matrix_aem}} or
 \code{\link{make_scoring_matrix_trivial}}}
 
-\item{FUNd}{function that will be used to generate item difficulties,h
+\item{FUNd}{a function that will be used to generate item difficulties,h
 typically \code{\link[stats]{Uniform}}, \code{\link[stats]{Normal}} or
 \code{\link[truncnorm]{rtruncnorm}}}
 
-\item{argsd}{list of arguments to be passed to \code{FUNd}}
+\item{argsd}{a list of arguments to be passed to \code{FUNd}}
 
-\item{FUNt}{optionally function that will be used to generate item
+\item{FUNt}{optionally a function that will be used to generate item
 thresholds (i.e. difficulties of categories relative to difficulty of the
-whole item), assuming \emph{simultaneous} item responding process;
+whole item), assuming \emph{gpcm} item responding process;
 typically \code{\link[stats]{Uniform}}, \code{\link[stats]{Normal}} or
 \code{\link[truncnorm]{rtruncnorm}}; if not set item responding process is
-assumed to be a \emph{sequential} one;}
+assumed to be a \emph{irtree} one;}
 
-\item{argst}{optionally list of arguments to be passed to \code{FUNt}}
+\item{argst}{optionally a list of arguments to be passed to \code{FUNt}}
 }
 \value{
-Matrix of \code{nItems} rows and number of columns equal to the
+A matrix of \code{nItems} rows and number of columns equal to the
 number of intercepts. \strong{Be aware that these are \emph{intercepts} and
 not \emph{thresholds} what are returned} (and intercept for a category
 \emph{g} is a sum of \emph{thresholds} from the first category up to the
@@ -48,9 +48,9 @@ Function generates a matrix of items' intercept
 (thresholds/difficulties) parameters.
 }
 \details{
-\strong{Assuming \emph{sequential} response process:}
+\strong{Assuming \emph{irtree} response process:}
 
-Assuming \emph{sequential} response process test item must be characterized
+Assuming \emph{irtree} response process test item must be characterized
 by a set of intercept parameters describing individual thresholds of binary
 \emph{pseudo-items} modeling consecutive decisions in the assumed sequence
 of responding process. In such a case:
@@ -60,16 +60,17 @@ of responding process. In such a case:
   \item{argument \code{argsd} provides arguments that will be passed to the
         function provided by \code{FUNd}; elements of this list should rather
         be named; each element of the list should be a vector (typically
-        a numeric one) with only one element or as many elements, as the
-        number of columns in the \code{scoringMatrix} - in this latter case
-        consecutive elements of (each) vector will be passed to separate
-        calls of the \code{FUNd} generating thresholds for respective
-        \emph{pseudo-items} across all the items;}
+        a numeric one, but can be also a list of matrices) with only one
+        element or as many elements, as the number of columns in the
+        \code{scoringMatrix} - in this latter case consecutive elements of
+        (each) vector will be passed to separate calls of the \code{FUNd}
+        generating thresholds for respective \emph{pseudo-items} across all
+        the items;}
   \item{arguments \code{FUNt} and \code{argst} are not used.}
 }
-\strong{Assuming \emph{simultaneous} response process:}
+\strong{Assuming \emph{GPCM} response process:}
 
-Assuming \emph{simultaneous} response process test item must be characterized
+Assuming \emph{GPCM} response process test item must be characterized
 by a set of \emph{intercept} parameters describing relative frequency of
 specific categories of the response scale. However, it is convenient to
 define model parameters in another parameterisation, in which item
@@ -107,17 +108,17 @@ Returned \emph{intercepts} are computed by summing general item
 a given item and then computing cumulative sum of this vector.
 }
 \examples{
-# 5 items with 5-point response scale assuming "sequential" item response
+# 5 items with 5-point response scale assuming IRTree item response
 # process with "pseudo-items" intercepts sampled from a uniform distribution
 # with limits +-1.5
 sM <- make_scoring_matrix_aem(5, sequence = "mae")
 generate_intercepts(5, sM, runif, list(min = -1.5, max = 1.5))
-# 10 items with 5-point response scale assuming "sequential" item response
+# 10 items with 5-point response scale assuming IRTree item response
 # process with "pseudo-items" intercepts sampled from a normal distribution
 # with the mean of 0 and the standard deviation of 1.5
 sM <- make_scoring_matrix_aem(5, sequence = "mae")
 generate_intercepts(5, sM, rnorm, list(mean = 0, sd = 1))
-# 10 items with 5-point response scale assuming "sequential" item response
+# 10 items with 5-point response scale assuming IRTree item response
 # process with "pseudo-items" intercepts sampled from a uniform distribution
 # with limits set to:
 # trait 'm' (i.e. the first column in the scoring matrix): from -3 to -1
@@ -128,32 +129,32 @@ generate_intercepts(10, sM, runif,
                     list(min = c(-3, -1, 1),
                          max = c(-1, 1, 3)))
 
-# 10 items with 6-point response scale assuming "simultaneous" item response
+# 10 items with 6-point response scale assuming GPCM item response
 # process with items difficulties sampled from a normal distribution with
 # the mean of 0 and the standard deviation of 1.5 and thresholds relative
 # to the items difficulties sampled from a uniform distribution with
 # the limits of +-2
-sM <- make_scoring_matrix_aem(6, sequence = "simultaneous")
+sM <- make_scoring_matrix_aem(6, sequence = "gpcm")
 generate_intercepts(10, sM,
                     FUNd = rnorm, argsd = list(mean = 0, sd = 1.5),
                     FUNt = runif, argst = list(min = -2, max = 2))
-# 5 items with 6-point response scale assuming "simultaneous" item response
+# 5 items with 6-point response scale assuming GPCM item response
 # process with items difficulties sampled from a uniform distribution with
 # the limits of +-2 and thresholds relative to the items difficulties sampled
 # from a normal distribution with the mean of 0 and the standard deviation
 # defined individually for each item
 # the limits of +-2
-sM <- make_scoring_matrix_aem(6, sequence = "simultaneous")
+sM <- make_scoring_matrix_aem(6, sequence = "gpcm")
 generate_intercepts(5, sM,
                     FUNd = runif, argsd = list(min = -2, max = 2),
                     FUNt = rnorm, argst = list(mean = 0,
                                                sd = c(1, 1.2, 1.4, 1.6, 1.9)))
-# 20 items with 5-point response scale assuming "simultaneous" item response
+# 20 items with 5-point response scale assuming GPCM item response
 # process with items difficulties sampled from a uniform distribution with
 # the limits of +-2 and thresholds relative to the items difficulties
 # generated deterministically as a sequence of 4 regularly spaced values
 # from 0.9 to -0.9
-sM <- make_scoring_matrix_aem(5, sequence = "simultaneous")
+sM <- make_scoring_matrix_aem(5, sequence = "gpcm")
 generate_intercepts(20, sM,
                     FUNd = runif, argsd = list(min = -2, max = 2),
                     FUNt = seq, argst = list(from = 0.9,

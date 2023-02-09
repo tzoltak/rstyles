@@ -12,16 +12,16 @@ generate_test_responses(
 )
 }
 \arguments{
-\item{theta}{matrix (or data frame) of already generated latent traits'
+\item{theta}{a matrix (or data frame) of already generated latent traits'
 values}
 
-\item{items}{list with test items' specification}
+\item{items}{a list with test items' specification}
 
-\item{performAssertions}{logical value indicating whether function should
+\item{performAssertions}{a logical value indicating whether function should
 perform assertions of the other arguments (\code{TRUE} by default, may be
 changed to \code{FALSE} for a little performance gain)}
 
-\item{tryConvertToNumeric}{logical value indicating whether function should
+\item{tryConvertToNumeric}{a logical value indicating whether function should
 try to convert generated responses to numeric values (technically responses
 are get from rownames of the items' scoring matrices that are character
 vectors)}

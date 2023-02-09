@@ -6,7 +6,7 @@
 \usage{
 make_scoring_matrix_aem(
   responses,
-  sequence = c("mae", "mea", "aem", "ame", "ema", "eam", "simultaneous"),
+  sequence = c("mae", "mea", "aem", "ame", "ema", "eam", "gpcm"),
   nMiddle = 2L,
   nExtreme = 1L,
   nAcquiescence = floor(length(responses)/2),
@@ -16,11 +16,11 @@ make_scoring_matrix_aem(
 )
 }
 \arguments{
-\item{responses}{vector of available responses (\emph{categories}) - can be
+\item{responses}{a vector of available responses (\emph{categories}) - can be
 a character vector or positive integer describing number of responses}
 
-\item{sequence}{text: "simultaneous" or a three-letters sequence describing
-the order of decisions made by a \emph{respondent}:
+\item{sequence}{a string: "gpcm" or a three-letters sequence describing
+the order of nodes in the IRTree:
 \itemize{
   \item{'m' stands for choosing between middle \emph{category} and some other
         \emph{category}}
@@ -31,13 +31,13 @@ the order of decisions made by a \emph{respondent}:
         other \emph{category}}
 }}
 
-\item{nMiddle}{(maximum) number of \emph{middle} \emph{categories}}
+\item{nMiddle}{the (maximum) number of \emph{middle} \emph{categories}}
 
-\item{nExtreme}{(half of the) number of \emph{extreme} \emph{categories}}
+\item{nExtreme}{(half of) the number of \emph{extreme} \emph{categories}}
 
-\item{nAcquiescence}{number of \emph{acquiescence} \emph{categories}}
+\item{nAcquiescence}{the number of \emph{acquiescence} \emph{categories}}
 
-\item{reversed}{logical value - is item a reversed one? (see details)}
+\item{reversed}{a logical value - is item a reversed one? (see details)}
 
 \item{aType}{determines a way in which scoring pattern for acquiescence is
 generated when it appears in different branches of the IRTree (whether to
@@ -46,11 +46,11 @@ acquiescence in different nodes of the tree or to create only a single column
 holding discrimination in different nodes of the tree constant)}
 
 \item{iType}{determines a way in which scoring pattern for additional (see
-the description of the `aType` parameter above)
-\emph{intensity} trait will be generated (see details)}
+the description of the `aType` parameter above) \emph{intensity} trait will
+be generated (see details)}
 }
 \value{
-matrix of integers
+a matrix of integers
 }
 \description{
 Makes response matrix, i.e. matrix describing how each latent
@@ -59,7 +59,11 @@ response category (represented in rows) assuming effects of
 \emph{acquiescence}, \emph{extreme} and \emph{middle} response styles.
 }
 \details{
-\strong{\code{sequence} other than "simultaneous":}
+\strong{\code{sequence} other than "gpcm":}
+
+For important remarks on the possibilities and limitations of interpretation
+of IRTree models, that are represented by this type of scoring matrices,
+see Plieninger (2020).
 
 For number of responses between 5 and 6 function generates scoring
 matrix in a way mimicking Böckenholt's approach (2017) to describe
@@ -96,11 +100,11 @@ column (allowing for specification of different model parameters).
 Analogously to \emph{acquiescence} trait these columns can be collapsed into
 one by setting \code{iType = "common"}.
 
-\strong{\code{sequence} is "simultaneous":}
+\strong{\code{sequence} is "gpcm":}
 
 In this case a GPCM scoring matrix is generated mimicking approach of
 Plieninger (2016), i.e. assuming that response process is
-a \emph{simultaneous} and four factors: intensity of the trait that
+a \emph{gpcm} and four factors: intensity of the trait that
 is \strong{not} a response style (column \emph{i}), tendency to choose middle
 \emph{categories} (column \emph{m}) tendency to choose extreme
 \emph{categories} (column \emph{e}) and tendency to choose acquiescence
@@ -115,8 +119,8 @@ of choosing each response.
 # Bockenholt 2017: 77
 (bockenholtAEM6 <- make_scoring_matrix_aem(6, "aem"))
 # Plieninger 2016: 39
-(plieninger5 <- make_scoring_matrix_aem(5, "simultaneous"))
-(plieninger5r <- make_scoring_matrix_aem(5, "simultaneous", reversed = TRUE))
+(plieninger5 <- make_scoring_matrix_aem(5, "gpcm"))
+(plieninger5r <- make_scoring_matrix_aem(5, "gpcm", reversed = TRUE))
 
 # some more complicated cases:
 make_scoring_matrix_aem(10, "ema", nMiddle = 3, nExtreme = 2)

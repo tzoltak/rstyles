@@ -2,10 +2,10 @@
 #' @description Using scoring matrix provided as its second argument function
 #' \emph{expands} (recodes) responses to each item (column) in a provided matrix
 #' of responses into a set of variables that may be put into model estimation.
-#' @param responses matrix of responses with items in columns and observations
+#' @param responses a matrix of responses with items in columns and observations
 #' in rows
-#' @param scoringMatrix matrix describing scoring patterns on each latent trait
-#' @return matrix (of integers)
+#' @param scoringMatrix a matrix describing scoring patterns on each latent trait
+#' @return A matrix (of integers)
 #' @examples
 #' sM <- make_scoring_matrix_aem(5, "mae")
 #' responses <- matrix(sample(1L:5L, 20, replace = TRUE), ncol = 4,
@@ -26,7 +26,8 @@ expand_responses <- function(responses, scoringMatrix) {
             all(setdiff(unique(unlist(sapply(responses, unique))), NA) %in%
                   rownames(scoringMatrix)))
 
-  respWide <- matrix(NA, nrow = nrow(responses),
+  responses <- as.matrix(responses)
+  respWide <- matrix(NA_real_, nrow = nrow(responses),
                      ncol = ncol(scoringMatrix) * ncol(responses),
                      dimnames = list(NULL,
                                      paste0(rep(colnames(scoringMatrix),

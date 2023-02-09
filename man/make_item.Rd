@@ -8,35 +8,35 @@ make_item(
   scoringMatrix,
   slopes,
   intercepts,
-  mode = c("sequential", "simultaneous"),
+  mode = c("irtree", "gpcm"),
   scoringOnPreviousResponses = NULL,
   editResponse = NULL
 )
 }
 \arguments{
-\item{scoringMatrix}{matrix describing how responses (described in rownames
+\item{scoringMatrix}{a matrix describing how responses (described in rownames
 of the matrix) map on \emph{scores} of latent traits (described in columns of
 the matrix)}
 
-\item{slopes}{\strong{named} numeric vector of slope (discrimination)
+\item{slopes}{a \strong{named} numeric vector of slope (discrimination)
 parameters with names describing latent variables matching each slope
 (must contain at least all the names occurring in column \emph{names} of the
 \code{scoringMatrix} but may also contain additional slopes matching latent
 traits scoring patterns that will be returned by functions provided with
 arguments \code{scoringOnPreviousResponses} or \code{editResponse})}
 
-\item{intercepts}{numeric vector of intercept parameters (must be shorter
+\item{intercepts}{a numeric vector of intercept parameters (must be shorter
 of one than number of rows in the \\code{scoringMatrix} or the same length
 but with the first element being 0)}
 
-\item{mode}{a way the item should be answered - see
-\code{\link{generate_item_responses_sqn}},
-\code{\link{generate_item_responses_sml}}}
+\item{mode}{the way the item should be answered - see
+\code{\link{generate_item_responses_sqn}} for "irtree" and
+\code{\link{generate_item_responses_sml}} for "gpcm"}
 
-\item{scoringOnPreviousResponses}{optional function returning a column vector
+\item{scoringOnPreviousResponses}{an optional function returning a column vector
 that will be put before first column of the \code{scoringMatrix}}
 
-\item{editResponse}{only if \code{mode='sequential'}: optional function
+\item{editResponse}{only if \code{mode='irtree'}: an optional function
 returning scoring matrix that should replace that provided by
 \code{scoringMatrix} after \emph{response is made} at the first \emph{node};
 this should be function accepting two arguments: \code{response} - generated
@@ -45,7 +45,7 @@ response (by the model described with the first column of the
 \code{scoringMatrix} - current scoring matrix (to be replaced)}
 }
 \value{
-Object of class \emph{rstylesItem} representing an item. List of
+An object of class \emph{rstylesItem} representing an item. List of
 such objects is passed as a test specification to
 \code{\link{generate_test_responses}}.
 }

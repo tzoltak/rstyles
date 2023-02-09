@@ -11,16 +11,17 @@ make_scoring_matrix_trivial(
 )
 }
 \arguments{
-\item{responses}{vector of available responses (\emph{categories}) - can be
+\item{responses}{a vector of available responses (\emph{categories}) - can be
 a character vector or positive integer describing number of responses}
 
-\item{nTraits}{optionally number of traits affecting the item response;
+\item{nTraits}{optionally the number of traits affecting the item response;
 disregarded if \code{traitsNames} are provided}
 
-\item{traitsNames}{optionally character vector containing names of the traits}
+\item{traitsNames}{optionally a character vector containing names of the
+traits}
 }
 \value{
-matrix of integers
+a matrix of integers
 }
 \description{
 Makes trivial response matrix, corresponding to the most simple,
