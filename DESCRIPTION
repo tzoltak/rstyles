@@ -1,7 +1,7 @@
 Package: rstyles
 Type: Package
 Title: Generating Simulated Data Mimicking Response Styles to Survey Questions
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: c(person("Tomasz", "Zoltak",
                     email = "tomek@zozlak.org",
                     role = c("aut", "cre"),

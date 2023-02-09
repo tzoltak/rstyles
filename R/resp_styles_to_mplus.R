@@ -21,7 +21,7 @@
 #' \code{rdata}, \code{usevariables} that can be used as arguments to the
 #' \code{mplusObject} function from the package \emph{MplusAutomation} using
 #' \code{\link{do.call}}
-#' @importFrom stats na.omit
+#' @importFrom stats na.omit setNames
 #' @export
 make_mplus_irtree_model_syntax <- function(data, items, scoringMatrix,
                                            observedExogenous = vector(mode = "character", length = 0L),
@@ -53,6 +53,9 @@ make_mplus_irtree_model_syntax <- function(data, items, scoringMatrix,
   if (is.character(items)) {
     stopifnot(all(items %in% names(data)))
     itemNames <- items
+    items <- setNames(rep(list(list(items)), ncol(scoringMatrix)),
+                      colnames(scoringMatrix))
+    items <- mapply(setNames, items, names(items), SIMPLIFY = FALSE)
   } else { # a list
     stopifnot(all(names(items) %in% colnames(scoringMatrix)),
               all(colnames(scoringMatrix) %in% names(items)),
