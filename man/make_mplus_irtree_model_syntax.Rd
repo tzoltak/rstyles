@@ -29,7 +29,7 @@ matching to latent traits in a between-item multidimensional model; in the
 latter case list elements must be named after column names of the
 \code{scoringMatrix} with each element being a list describing different
 latent traits that should be scored using a given column of the
-\code{scoringMatrix}; names of these \emph{sceond-level} elements specify
+\code{scoringMatrix}; names of these \emph{second-level} elements specify
 names of latent traits and elements themselves are character vectors of item
 names that are assigned to (loaded) a given latent trait}
 

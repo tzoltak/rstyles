@@ -355,7 +355,9 @@ make_mplus_gpcm_model_syntax <- function(data, items, scoringMatrix,
                                         reverseCoded = reverseCoded,
                                         orthogonal = orthogonal,
                                         weight = weight,
-                                        itemCategories = itemCategories)
+                                        itemCategories = itemCategories,
+                                        trySimpleGPCM = !any(grepl("STD",
+                                                                   output)))
   if (is.na(weight)) weight = vector(mode = "character", length = 0L)
   data <- data[, c(unique(unlist(items)), observedExogenous,
                    observedDependent, weight), drop = FALSE]
@@ -389,6 +391,9 @@ make_mplus_gpcm_model_syntax <- function(data, items, scoringMatrix,
 #' @description Prepares components of Mplus model description syntax.
 #' @inheritParams make_mplus_irtree_vmmc_syntax
 #' @param itemCategories a list of values that a given item takes in the data
+#' @param trySimpleGPCM a logical value indicating whether to try to use
+#' a simple Mplus GPCM specification instead of the NRM when
+#' \code{scoringMatrix} has only one column
 #' @details Models are identified by fixing variances of the the latent
 #' variables \strong{that are not mentioned in \code{fixSlopes}} to 1 and
 #' by fixing \emph{slope} parameters to 1 (or -1 in a case of reverse coded
@@ -417,18 +422,21 @@ make_mplus_gpcm_vmmc_syntax <- function(items, scoringMatrix,
                                         orthogonal = vector(mode = "character", length = 0L),
                                         weight = NA_character_,
                                         itemCategories = rep(list(rownames(scoringMatrix)),
-                                                             length(items))) {
+                                                             length(items)),
+                                        trySimpleGPCM = TRUE) {
   stopifnot(is.character(items) | is.list(items),
             is.matrix(scoringMatrix), is.numeric(scoringMatrix),
-            is.character(weight), length(weight) == 1L)
+            is.character(weight), length(weight) == 1L,
+            is.logical(trySimpleGPCM), length(trySimpleGPCM) == 1L,
+            trySimpleGPCM %in% c(TRUE, FALSE))
   if (is.character(items)) {
     stopifnot(!anyNA(items), length(items) > 0L,
               all(!duplicated(items)))
     latentTraits <- colnames(scoringMatrix)
     names(latentTraits) <- latentTraits
-    items <- rep(list(items), ncol(scoringMatrix))
-    items <- mapply(setNames, items, colnames(scoringMatrix), SIMPLIFY = FALSE)
-    names(items) <- colnames(scoringMatrix)
+    items <- setNames(rep(list(list(items)), ncol(scoringMatrix)),
+                      colnames(scoringMatrix))
+    items <- mapply(setNames, items, names(items), SIMPLIFY = FALSE)
   } else { # a list
     stopifnot(all(names(items) %in% colnames(scoringMatrix)),
               all(colnames(scoringMatrix) %in% names(items)),
@@ -464,7 +472,7 @@ make_mplus_gpcm_vmmc_syntax <- function(items, scoringMatrix,
   model <- constraints <- vector(mode = "character", length = 0L)
 
   # simple GPCM specification
-  if (ncol(scoringMatrix) == 1L &
+  if (ncol(scoringMatrix) == 1L & trySimpleGPCM &
       all(sapply(itemCategories, nrow) == nrow(scoringMatrix))) {
     variable <- paste0("CATEGORICAL = ",
                        paste(unique(unlist(items)), collapse = " "), " (gpcm);")

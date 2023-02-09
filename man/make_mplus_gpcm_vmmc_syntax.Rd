@@ -13,7 +13,8 @@ make_mplus_gpcm_vmmc_syntax(
   reverseCoded = vector(mode = "list", length = 0L),
   orthogonal = vector(mode = "character", length = 0L),
   weight = NA_character_,
-  itemCategories = rep(list(rownames(scoringMatrix)), length(items))
+  itemCategories = rep(list(rownames(scoringMatrix)), length(items)),
+  trySimpleGPCM = TRUE
 )
 }
 \arguments{
@@ -22,7 +23,7 @@ matching to latent traits in a between-item multidimensional model; in the
 latter case list elements must be named after column names of the
 \code{scoringMatrix} with each element being a list describing different
 latent traits that should be scored using a given column of the
-\code{scoringMatrix}; names of these \emph{sceond-level} elements specify
+\code{scoringMatrix}; names of these \emph{second-level} elements specify
 names of latent traits and elements themselves are character vectors of item
 names that are assigned to (loaded) a given latent trait}
 
@@ -68,6 +69,10 @@ other and all the other latent traits)}
 \item{weight}{optionally a string with a name of the variable storing weights}
 
 \item{itemCategories}{a list of values that a given item takes in the data}
+
+\item{trySimpleGPCM}{a logical value indicating whether to try to use
+a simple Mplus GPCM specification instead of the NRM when
+\code{scoringMatrix} has only one column}
 }
 \value{
 A list of strings with elements named \code{VARIABLE}, \code{MODEL}

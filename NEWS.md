@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-- `make_mplus_irtree_model_syntax()` works with `items` provided as a simple character vector.
+- `make_mplus_irtree_model_syntax()` and `make_mplus_gpcm_model_syntax()` works with `items` provided as a simple character vector.
 
 # rstyles 0.7.0 (9.02.2023)
 
