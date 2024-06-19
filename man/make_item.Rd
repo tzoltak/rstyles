@@ -26,7 +26,7 @@ traits scoring patterns that will be returned by functions provided with
 arguments \code{scoringOnPreviousResponses} or \code{editResponse})}
 
 \item{intercepts}{a numeric vector of intercept parameters (must be shorter
-of one than number of rows in the \\code{scoringMatrix} or the same length
+of one than number of rows in the \code{scoringMatrix} or the same length
 but with the first element being 0)}
 
 \item{mode}{the way the item should be answered - see

@@ -23,7 +23,8 @@ expand_responses <- function(responses, scoringMatrix) {
             !duplicated(rownames(scoringMatrix)),
             !is.null(colnames(scoringMatrix)),
             !duplicated(colnames(scoringMatrix)),
-            all(setdiff(unique(unlist(sapply(responses, unique))), NA) %in%
+            "All values occuring in the 'response' argument must match some name of the scoring matrix." =
+              all(setdiff(unique(unlist(sapply(responses, unique))), NA) %in%
                   rownames(scoringMatrix)))
 
   responses <- as.matrix(responses)

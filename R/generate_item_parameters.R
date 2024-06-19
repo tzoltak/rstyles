@@ -218,7 +218,7 @@ generate_slopes <- function(nItems, scoringMatrix, ..., FUN = identity,
 #' by a set of \emph{intercept} parameters describing relative frequency of
 #' specific categories of the response scale. However, it is convenient to
 #' define model parameters in another parameterisation, in which item
-#' \emph{thresholds} describe {difficulty} of switching between consecutive
+#' \emph{thresholds} describe \emph{difficulty} of switching between consecutive
 #' categories of the response scale, and only then transform these
 #' \emph{thresholds} to \emph{intercepts}. Function follows this approach and:
 #' 1) first generates general \emph{difficulties} of the whole items, then
