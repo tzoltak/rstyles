@@ -19,13 +19,13 @@ resp <- generate_test_responses(theta, items)
 
 # scaling
 respWide <- expand_responses(resp, sM)
-mSqt <- suppressMessages(mirt(respWide,
-                              mirt.model("m = 1-20
-                         a1 = 21-40
-                         a2 = 41-60
-                         e = 61-80"),
-                         '2PL', TOL = 0.1, verbose = FALSE))
-estItemPars <- coef(mSqt, simplify = TRUE)$items
+mSqt <- suppressMessages(mirt::mirt(respWide,
+                                    mirt::mirt.model("m = 1-20
+                                                      a1 = 21-40
+                                                      a2 = 41-60
+                                                      e = 61-80"),
+                                    '2PL', TOL = 0.1, verbose = FALSE))
+estItemPars <- mirt::coef(mSqt, simplify = TRUE)$items
 estItemPars <- cbind(m = estItemPars[1:nItems, 1],
                      a1 = estItemPars[(nItems + 1):(2*nItems), 2],
                      a2 = estItemPars[(2*nItems + 1):(3*nItems), 3],

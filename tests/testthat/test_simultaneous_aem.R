@@ -24,15 +24,15 @@ colnames(theta) <- colnames(vcovTraits)
 resp <- generate_test_responses(theta, items)
 
 # scaling
-mSml <- suppressMessages(mirt(resp,
-                              mirt.model("i = 1-20
-                                          m = 1-20
-                                          e = 1-20
-                                          a = 1-20"),
-                         'gpcm',
-                         gpcm_mats = lapply(1:ncol(resp), function(x) sM),
-                         method = "EM", TOL = 0.1, verbose = FALSE))
-estItemPars <- coef(mSml, simplify = TRUE)$items
+mSml <- suppressMessages(mirt::mirt(resp,
+                                    mirt::mirt.model("i = 1-20
+                                                      m = 1-20
+                                                      e = 1-20
+                                                      a = 1-20"),
+                                    'gpcm',
+                                    gpcm_mats = lapply(1:ncol(resp), function(x) sM),
+                                    method = "EM", TOL = 0.1, verbose = FALSE))
+estItemPars <- mirt::coef(mSml, simplify = TRUE)$items
 intercepts <- intercepts[, -1]
 test_that("Item parameters of simultaneous A, E, M RS (with 5-point scale) recovers in estimation with reasonable MSEs.", {
   expect_lt(mean((slopes[, 1] - estItemPars[, 1])^2), 0.17)
