@@ -12,7 +12,8 @@ make_scoring_matrix_aem(
   nAcquiescence = floor(length(responses)/2),
   reversed = FALSE,
   aType = c("separate", "common"),
-  iType = c("separate", "common")
+  iType = c("separate", "common"),
+  eType = c("common", "separate")
 )
 }
 \arguments{
@@ -48,6 +49,9 @@ holding discrimination in different nodes of the tree constant)}
 \item{iType}{determines a way in which scoring pattern for additional (see
 the description of the `aType` parameter above) \emph{intensity} trait will
 be generated (see details)}
+
+\item{eType}{determines a way in which scoring pattern for \emph{extremity}
+trait will be generated (see details)}
 }
 \value{
 a matrix of integers
@@ -100,6 +104,13 @@ column (allowing for specification of different model parameters).
 Analogously to \emph{acquiescence} trait these columns can be collapsed into
 one by setting \code{iType = "common"}.
 
+Also \emph{extremity} trait can be modeled as following the same process in
+different branches of the tree or to be separated into distinct
+processes/pseudoitems, as some researchers postulate (Merhof & Meiser, 2023).
+Please note that for this trait - contrary to \emph{acquiescence} and
+\emph{intensity} teh default behaviour is to keep the only one, common
+process.
+
 \strong{\code{sequence} is "gpcm":}
 
 In this case a GPCM scoring matrix is generated mimicking approach of
@@ -118,6 +129,8 @@ of choosing each response.
 (bockenholtMAE6 <- make_scoring_matrix_aem(6, "mae"))
 # Bockenholt 2017: 77
 (bockenholtAEM6 <- make_scoring_matrix_aem(6, "aem"))
+# Merhof & Meiser, 2023
+(merhofMeiser4 <- make_scoring_matrix_aem(4, "aem", eType = "separate"))
 # Plieninger 2016: 39
 (plieninger5 <- make_scoring_matrix_aem(5, "gpcm"))
 (plieninger5r <- make_scoring_matrix_aem(5, "gpcm", reversed = TRUE))

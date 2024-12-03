@@ -118,11 +118,13 @@ make_mplus_irtree_model_syntax <- function(data, items, scoringMatrix,
                                           reverseCoded = reverseCoded,
                                           orthogonal = orthogonal,
                                           weight = weight)
-  analysis <- paste(mapply(
-    function(nm, val) {
-      return(paste0(nm, " IS ", val, ";"))
-    },
-    names(analysis), analysis, SIMPLIFY = TRUE))
+  analysis <- paste(
+    mapply(
+      function(nm, val) {
+        return(paste0(nm, " IS ", val, ";"))
+      },
+      names(analysis), analysis, SIMPLIFY = TRUE),
+    collapse = "\n")
   if (length(output) > 0L) {
     output <- paste0(paste(output, collapse = " "), ";")
   } else {
@@ -361,11 +363,13 @@ make_mplus_gpcm_model_syntax <- function(data, items, scoringMatrix,
   if (is.na(weight)) weight = vector(mode = "character", length = 0L)
   data <- data[, c(unique(unlist(items)), observedExogenous,
                    observedDependent, weight), drop = FALSE]
-  analysis <- paste(mapply(
-    function(nm, val) {
-      return(paste0(nm, " IS ", val, ";"))
-    },
-    names(analysis), analysis, SIMPLIFY = TRUE))
+  analysis <- paste(
+    mapply(
+      function(nm, val) {
+        return(paste0(nm, " IS ", val, ";"))
+      },
+      names(analysis), analysis, SIMPLIFY = TRUE),
+    collapse = "\n")
   if (length(output) > 0L) {
     output <- paste0(paste(output, collapse = " "), ";")
   } else {

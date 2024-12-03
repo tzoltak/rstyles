@@ -1,7 +1,7 @@
 Package: rstyles
 Type: Package
 Title: Generating Simulated Data Mimicking Response Styles to Survey Questions
-Version: 0.7.1
+Version: 0.7.3
 Authors@R: c(person("Tomasz", "Zoltak",
                     email = "tomek@zozlak.org",
                     role = c("aut", "cre"),
@@ -40,5 +40,5 @@ Suggests:
     MplusAutomation
 Encoding: UTF-8
 Language: en-US
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3

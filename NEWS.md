@@ -1,3 +1,15 @@
+# rstyles 0.7.3 (3.12.2024)
+
+## Enhancements
+
+- `make_scoring_matrix_aem()` has a new argument `eType` allowing to prepare scoring matrices with distnict processes regarding the *extremity* trait in different nodes of the decision tree, as desribed in (Merhof & Meiser, 2023).
+
+# rstyles 0.7.2 (1.07.2024)
+
+## Bug fixes
+
+- `make_mplus_irtree_model_syntax()` and `make_mplus_gpcm_model_syntax()` collapses ANALYSIS element to be a single string what makes `MplusAutomation::mplusModeler()` not failing when run in R >=4.3.0.
+
 # rstyles 0.7.1 (9.02.2023)
 
 ## Bug fixes

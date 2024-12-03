@@ -28,6 +28,8 @@
 #' @param iType determines a way in which scoring pattern for additional (see
 #' the description of the `aType` parameter above) \emph{intensity} trait will
 #' be generated (see details)
+#' @param eType determines a way in which scoring pattern for \emph{extremity}
+#' trait will be generated (see details)
 #' @details \strong{\code{sequence} other than "gpcm":}
 #'
 #' For important remarks on the possibilities and limitations of interpretation
@@ -69,6 +71,13 @@
 #' Analogously to \emph{acquiescence} trait these columns can be collapsed into
 #' one by setting \code{iType = "common"}.
 #'
+#' Also \emph{extremity} trait can be modeled as following the same process in
+#' different branches of the tree or to be separated into distinct
+#' processes/pseudoitems, as some researchers postulate (Merhof & Meiser, 2023).
+#' Please note that for this trait - contrary to \emph{acquiescence} and
+#' \emph{intensity} teh default behaviour is to keep the only one, common
+#' process.
+#'
 #' \strong{\code{sequence} is "gpcm":}
 #'
 #' In this case a GPCM scoring matrix is generated mimicking approach of
@@ -87,6 +96,8 @@
 #' (bockenholtMAE6 <- make_scoring_matrix_aem(6, "mae"))
 #' # Bockenholt 2017: 77
 #' (bockenholtAEM6 <- make_scoring_matrix_aem(6, "aem"))
+#' # Merhof & Meiser, 2023
+#' (merhofMeiser4 <- make_scoring_matrix_aem(4, "aem", eType = "separate"))
 #' # Plieninger 2016: 39
 #' (plieninger5 <- make_scoring_matrix_aem(5, "gpcm"))
 #' (plieninger5r <- make_scoring_matrix_aem(5, "gpcm", reversed = TRUE))
@@ -101,12 +112,14 @@ make_scoring_matrix_aem <- function(
   responses, sequence = c("mae", "mea", "aem", "ame", "ema", "eam", "gpcm"),
   nMiddle = 2L, nExtreme = 1L, nAcquiescence = floor(length(responses) / 2),
   reversed = FALSE,
-  aType = c("separate", "common"), iType = c("separate", "common"))
+  aType = c("separate", "common"), iType = c("separate", "common"),
+  eType = c("common", "separate"))
 {
   if (sequence == "simultaneous") sequence <- "gpcm"
   sequence = match.arg(sequence)
   aType = match.arg(aType)
   iType = match.arg(iType)
+  eType = match.arg(eType)
   responses <- assert_responses(responses)
   if (inherits(responses, "try-error")) {
     stop(sub("^.*: \\n +", "", responses))
@@ -163,7 +176,7 @@ make_scoring_matrix_aem <- function(
   scoringSubMatrices <- vector(mode = "list", length = 4)
   names(scoringSubMatrices) <- colNames
   # initial fill-in
-  for (i in 1L:length(scoringSubMatrices)) {
+  for (i in seq_along(scoringSubMatrices)) {
     if (names(scoringSubMatrices)[i] == "m") {
       scoringSubMatrices[[i]] <-
         matrix(c(rep(0L, (length(responses) - nMiddle) / 2),
@@ -171,11 +184,41 @@ make_scoring_matrix_aem <- function(
                  rep(0L, (length(responses) - nMiddle) / 2)),
                ncol = 1, dimnames = list(responses, "m"))
     } else if (names(scoringSubMatrices)[i] == "e") {
-      scoringSubMatrices[[i]] <-
-        matrix(c(rep(1L, nExtreme),
-                 rep(0L, length(responses) - 2*nExtreme),
-                 rep(1L, nExtreme)),
-               ncol = 1, dimnames = list(responses, "e"))
+      if (sequence != "gpcm" && eType == "separate" && i > 1L) {
+        scoringMatrix <- cbind(scoringSubMatrices[[1]],
+                               scoringSubMatrices[[2]],
+                               scoringSubMatrices[[3]],
+                               scoringSubMatrices[[4]])
+        patterns <- apply(scoringMatrix, 1L, paste, collapse = "")
+        uniquePatterns <- table(patterns)
+        uniquePatterns <- names(uniquePatterns)[uniquePatterns > 1L]
+        nColExtreme <- length(uniquePatterns)
+        if (nColExtreme > 1L) {
+          scoringSubMatrices[[i]] <-
+            matrix(rep(c(rep(1L, nExtreme),
+                         rep(0L, length(responses) - 2*nExtreme),
+                         rep(1L, nExtreme)),
+                       nColExtreme),
+                   ncol = nColExtreme,
+                   dimnames = list(responses, paste0("e", 1L:nColExtreme)))
+          for (p in seq_along(uniquePatterns)) {
+            scoringSubMatrices[[i]][patterns != uniquePatterns[p], p] <-
+              NA_integer_
+          }
+        } else if (nColExtreme > 0L) {
+          scoringSubMatrices[[i]] <-
+            matrix(c(rep(1L, nExtreme),
+                     rep(0L, length(responses) - 2*nExtreme),
+                     rep(1L, nExtreme)),
+                   ncol = 1, dimnames = list(responses, "e"))
+        }
+      } else {
+        scoringSubMatrices[[i]] <-
+          matrix(c(rep(1L, nExtreme),
+                   rep(0L, length(responses) - 2*nExtreme),
+                   rep(1L, nExtreme)),
+                 ncol = 1, dimnames = list(responses, "e"))
+      }
     } else if (names(scoringSubMatrices)[i] == "a") {
       if (sequence != "gpcm" && aType == "separate" && i > 1L) {
         scoringMatrix <- cbind(scoringSubMatrices[[1]],
@@ -192,8 +235,9 @@ make_scoring_matrix_aem <- function(
                          rep(1L, nAcquiescence)),
                        nColAcquiescence),
                    ncol = nColAcquiescence,
-                   dimnames = list(responses, paste0("a", 1L:nColAcquiescence)))
-          for (p in 1L:length(uniquePatterns)) {
+                   dimnames = list(responses,
+                                   paste0("a", seq_len(nColAcquiescence))))
+          for (p in seq_along(uniquePatterns)) {
             scoringSubMatrices[[i]][patterns != uniquePatterns[p], p] <-
               NA_integer_
           }
@@ -233,7 +277,7 @@ make_scoring_matrix_aem <- function(
             matrix(rep(NA_integer_, length(responses)), ncol = 1,
                    dimnames = list(responses, "i"))
         }
-        for (p in 1L:length(uniquePatterns)) {
+        for (p in seq_along(uniquePatterns)) {
           scoringSubMatrices[[i]][patterns == uniquePatterns[p],
                                   ifelse(iType == "separate", p, 1L)] <-
             sort(0L:(sum(patterns == uniquePatterns[p]) - 1L),
@@ -312,7 +356,7 @@ make_scoring_matrix_trivial <- function(responses, nTraits = 1L,
               !any(is.na(traitsNames)),
             "Argument `traitsNames` can't contain duplicates." =
               !any(duplicated(traitsNames)))
-  return(matrix(rep((1L:length(responses)) - 1, length(traitsNames)),
+  return(matrix(rep((seq_along(responses)) - 1, length(traitsNames)),
                 nrow = length(responses),
                 dimnames = list(responses, traitsNames)))
 }
